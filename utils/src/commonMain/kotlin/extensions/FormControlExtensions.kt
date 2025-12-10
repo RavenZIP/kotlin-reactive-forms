@@ -6,13 +6,16 @@ import form.FormControl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
+val <T> FormControl<T>.currentValueWithTypeChange: ValueWithTypeChange<T>
+    get() = ValueWithTypeChange(value, typeChange)
+
 fun <T> FormControl<T>.valueWithTypeChange(): Flow<ValueWithTypeChange<T>> =
     valueChanges.combine(typeChanges) { value, typeChange ->
         ValueWithTypeChange(value, typeChange)
     }
 
-val <T> FormControl<T>.snapshot
-    get(): FormControlSnapshot<T> =
+val <T> FormControl<T>.snapshot: FormControlSnapshot<T>
+    get() =
         FormControlSnapshot.create(
             value = value,
             typeChange = typeChange,
