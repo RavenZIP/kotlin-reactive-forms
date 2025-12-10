@@ -9,4 +9,20 @@
 <img alt="Static Badge" src="https://img.shields.io/badge/v0.1.0-red">
 </div>
 
+## 🚀 Installation
+
 Coming Soon...
+
+## 🚬 Using
+
+Coming Soon...
+
+## 📜 License
+
+This library is licensed under the Apache 2.0 License. See the [LICENSE](../LICENSE) file for details.
+
+## 👾 Developer
+
+**Alexander Chernykh**
+
+- [Telegram](https://t.me/RavenZIP)
