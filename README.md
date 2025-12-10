@@ -46,12 +46,10 @@ dependencyResolutionManagement {
 
 ```
 dependencies {
-      implementation("com.github.RavenZIP.kotlin-reactive-forms
-:core:$version") 
+      implementation("com.github.RavenZIP.kotlin-reactive-forms:core:$version") 
 
       // При необходимости можно подключить utils-модуль
-      implementation("com.github.RavenZIP.kotlin-reactive-forms
-:utils:$version")
+      implementation("com.github.RavenZIP.kotlin-reactive-forms:utils:$version")
 }
 ```
 
