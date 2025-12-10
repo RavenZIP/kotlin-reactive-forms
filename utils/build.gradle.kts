@@ -15,7 +15,7 @@ kotlin {
     jvm()
 
     androidLibrary {
-        namespace = "org.jetbrains.kotlinx.kotlin.reactive.forms.core"
+        namespace = "org.jetbrains.kotlinx.kotlin.reactive.forms.utils"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -24,12 +24,13 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        outputModuleName.set("kotlin-reactive-forms-core")
-        browser { commonWebpackConfig { outputFileName = "kotlin-reactive-forms-core.js" } }
+        outputModuleName.set("kotlin-reactive-forms-utils")
+        browser { commonWebpackConfig { outputFileName = "kotlin-reactive-forms-utils.js" } }
     }
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core"))
             implementation(compose.runtime)
             implementation(libs.kotlinx.coroutines)
         }
@@ -46,7 +47,7 @@ publishing {
     publications {
         register<MavenPublication>("release") {
             groupId = "io.github.ravenzip.kotlin-reactive-forms"
-            artifactId = "kotlin-reactive-forms-core"
+            artifactId = "kotlin-reactive-forms-utils"
             version = "0.1.0"
 
             afterEvaluate { from(components["kotlin"]) }
