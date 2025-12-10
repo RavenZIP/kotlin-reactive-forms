@@ -30,7 +30,56 @@ Linux, macOS, iOS временно не поддерживаются, так к�
 
 ## 🚀 Установка
 
-Скоро...
+**settings.gradle.kts**
+
+```
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        ...
+        maven ("https://jitpack.io")
+    }
+}
+```
+
+**build.gradle.kts**
+
+```
+dependencies {
+      implementation("com.github.RavenZIP.kotlin-reactive-forms
+:core:$version") 
+
+      // При необходимости можно подключить utils-модуль
+      implementation("com.github.RavenZIP.kotlin-reactive-forms
+:utils:$version")
+}
+```
+
+Если вы используете libs.versions.toml
+
+**libs.versions.toml**
+
+```
+[versions]
+ravenzip-kotlin-reactive-forms = "$version"
+
+[libraries]
+ravenzip-kotlin-reactive-forms-core = { module = "com.github.RavenZIP.kotlin-reactive-forms:core", version.ref = "ravenzip-kotlin-reactive-forms" }
+
+// При необходимости можно подключить utils-модуль
+ravenzip-kotlin-reactive-forms-utils = { module = "com.github.RavenZIP.kotlin-reactive-forms:utils", version.ref = "ravenzip-kotlin-reactive-forms" }
+```
+
+**build.gradle.kts**
+
+```
+dependencies {
+      implementation(libs.ravenzip.kotlin.reactive.forms.core)
+      
+      // При необходимости можно подключить utils-модуль
+      implementation(libs.ravenzip.kotlin.reactive.forms.utils)
+}
+```
 
 ## 🚬 Использование
 
