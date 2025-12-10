@@ -16,11 +16,13 @@ interface FormControl<T> {
     val disabled: Boolean
     val touched: Boolean
     val dirty: Boolean
+    val errorMessages: List<String>
     val valueChanges: StateFlow<T>
     val typeChanges: StateFlow<ValueChangeType>
     val statusChanges: StateFlow<FormControlStatus>
     val touchedChanges: StateFlow<Boolean>
     val dirtyChanges: StateFlow<Boolean>
+    val errorMessagesChanges: StateFlow<List<String>>
 }
 
 @Stable
@@ -53,7 +55,7 @@ internal class MutableFormControlImpl<T>(
     private val _typeChanges: MutableStateFlow<ValueChangeType> =
         MutableStateFlow(ValueChangeType.Initialize)
 
-    private val _errorMessages: StateFlow<List<String>> =
+    override val errorMessagesChanges: StateFlow<List<String>> =
         _valueChanges
             .map { value -> _validators.mapNotNull { validatorFn -> validatorFn(value) } }
             .stateIn(
@@ -67,7 +69,7 @@ internal class MutableFormControlImpl<T>(
     override val typeChanges: StateFlow<ValueChangeType> = _typeChanges.asStateFlow()
 
     override val statusChanges: StateFlow<FormControlStatus> =
-        combine(_disabled, _errorMessages) { disabled, errorMessages ->
+        combine(_disabled, errorMessagesChanges) { disabled, errorMessages ->
                 when {
                     disabled -> FormControlStatus.Disabled
                     errorMessages.isNotEmpty() -> FormControlStatus.Invalid(errorMessages)
@@ -100,6 +102,9 @@ internal class MutableFormControlImpl<T>(
 
     override val dirty: Boolean
         get() = _dirty.value
+
+    override val errorMessages: List<String>
+        get() = errorMessagesChanges.value
 
     override fun setValue(value: T) {
         _valueChanges.update { value }
