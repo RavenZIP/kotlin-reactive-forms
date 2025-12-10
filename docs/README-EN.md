@@ -9,9 +9,65 @@
 <img alt="Static Badge" src="https://img.shields.io/badge/v0.1.0-red">
 </div>
 
-## 🚀 Installation
+## 🔎 What is Kotlin Reactive Forms??
+
+Kotlin Reactive Forms is a type-safe library of reactive forms and controls in the Kotlin programming language
+optimized for Jetpack Compose.
+
+## 🌍 Supported platforms
 
 Coming Soon...
+
+## 🚀 Installation
+
+```
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        ...
+        maven ("https://jitpack.io")
+    }
+}
+```
+
+**build.gradle.kts**
+
+```
+dependencies {
+      implementation("com.github.RavenZIP.kotlin-reactive-forms
+:core:$version") 
+
+      // If necessary, you can connect the utils module.
+      implementation("com.github.RavenZIP.kotlin-reactive-forms
+:utils:$version")
+}
+```
+
+If you are using libs.versions.toml
+
+**libs.versions.toml**
+
+```
+[versions]
+ravenzip-kotlin-reactive-forms = "$version"
+
+[libraries]
+ravenzip-kotlin-reactive-forms-core = { module = "com.github.RavenZIP.kotlin-reactive-forms:core", version.ref = "ravenzip-kotlin-reactive-forms" }
+
+// If necessary, you can connect the utils module.
+ravenzip-kotlin-reactive-forms-utils = { module = "com.github.RavenZIP.kotlin-reactive-forms:utils", version.ref = "ravenzip-kotlin-reactive-forms" }
+```
+
+**build.gradle.kts**
+
+```
+dependencies {
+      implementation(libs.ravenzip.kotlin.reactive.forms.core)
+      
+      // If necessary, you can connect the utils module.
+      implementation(libs.ravenzip.kotlin.reactive.forms.utils)
+}
+```
 
 ## 🚬 Using
 
