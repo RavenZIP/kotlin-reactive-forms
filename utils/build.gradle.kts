@@ -42,15 +42,3 @@ kotlin {
         }
     }
 }
-
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = "io.github.ravenzip.kotlin-reactive-forms"
-            artifactId = "kotlin-reactive-forms-utils"
-            version = "0.1.0"
-
-            afterEvaluate { from(components["kotlin"]) }
-        }
-    }
-}
