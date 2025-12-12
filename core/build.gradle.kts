@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -15,7 +16,7 @@ kotlin {
     jvm()
 
     androidLibrary {
-        namespace = "org.jetbrains.kotlinx.kotlin.reactive.forms.core"
+        namespace = "com.github.RavenZIP.kotlin.reactive.forms.core"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
