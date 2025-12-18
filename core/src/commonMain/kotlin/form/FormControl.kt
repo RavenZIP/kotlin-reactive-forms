@@ -109,7 +109,6 @@ internal class MutableFormControlImpl<T>(
     override fun setValue(value: T) {
         _valueChanges.update { value }
         _typeChanges.update { ValueChangeType.Set }
-        _dirty.update { true }
     }
 
     override fun reset() = reset(_initialValue)
