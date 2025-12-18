@@ -16,7 +16,7 @@ kotlin {
     jvm()
 
     androidLibrary {
-        namespace = "com.github.RavenZIP.kotlin.reactive.forms.utils"
+        namespace = "com.github.RavenZIP.kotlinreactiveforms.utils"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -25,8 +25,8 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        outputModuleName.set("kotlin-reactive-forms-utils")
-        browser { commonWebpackConfig { outputFileName = "kotlin-reactive-forms-utils.js" } }
+        outputModuleName.set("kotlinreactiveform-utils")
+        browser { commonWebpackConfig { outputFileName = "kotlinreactiveforms-utils.js" } }
     }
 
     sourceSets {

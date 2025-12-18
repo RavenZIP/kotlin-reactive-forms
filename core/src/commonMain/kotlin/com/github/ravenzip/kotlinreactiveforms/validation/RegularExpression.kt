@@ -1,4 +1,4 @@
-package validation
+package com.github.ravenzip.kotlinreactiveforms.validation
 
 internal val emailRegex: Regex =
     Regex(

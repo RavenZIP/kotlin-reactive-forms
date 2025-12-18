@@ -1,4 +1,4 @@
-package data
+package com.github.ravenzip.kotlinreactiveforms.data
 
 data class FormControlSnapshot<T>(
     val value: T,

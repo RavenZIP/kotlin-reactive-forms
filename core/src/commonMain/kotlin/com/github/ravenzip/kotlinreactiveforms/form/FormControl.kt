@@ -1,12 +1,12 @@
-package form
+package com.github.ravenzip.kotlinreactiveforms.form
 
 import androidx.compose.runtime.Stable
-import data.FormControlStatus
-import data.ValueChangeType
-import extension.addOrRemove
+import com.github.ravenzip.kotlinreactiveforms.data.FormControlStatus
+import com.github.ravenzip.kotlinreactiveforms.data.ValueChangeType
+import com.github.ravenzip.kotlinreactiveforms.extension.addOrRemove
+import com.github.ravenzip.kotlinreactiveforms.validation.ValidatorFn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
-import validation.ValidatorFn
 
 @Stable
 interface FormControl<T> {

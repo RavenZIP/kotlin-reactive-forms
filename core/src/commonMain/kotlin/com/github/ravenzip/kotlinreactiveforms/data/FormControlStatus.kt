@@ -1,4 +1,4 @@
-package data
+package com.github.ravenzip.kotlinreactiveforms.data
 
 sealed class FormControlStatus {
     object Disabled : FormControlStatus()

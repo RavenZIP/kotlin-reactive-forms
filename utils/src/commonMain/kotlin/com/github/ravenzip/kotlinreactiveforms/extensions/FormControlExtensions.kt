@@ -1,8 +1,8 @@
-package extensions
+package com.github.ravenzip.kotlinreactiveforms.extensions
 
-import data.FormControlSnapshot
-import data.ValueWithTypeChange
-import form.FormControl
+import com.github.ravenzip.kotlinreactiveforms.data.FormControlSnapshot
+import com.github.ravenzip.kotlinreactiveforms.data.ValueWithTypeChange
+import com.github.ravenzip.kotlinreactiveforms.form.FormControl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 

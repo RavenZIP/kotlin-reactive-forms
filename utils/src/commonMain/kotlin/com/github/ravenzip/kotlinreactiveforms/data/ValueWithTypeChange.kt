@@ -1,4 +1,4 @@
-package data
+package com.github.ravenzip.kotlinreactiveforms.data
 
 data class ValueWithTypeChange<T>(val value: T, val typeChange: ValueChangeType) {
     companion object {
