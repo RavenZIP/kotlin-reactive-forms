@@ -5,8 +5,10 @@ import com.github.ravenzip.kotlinreactiveforms.data.FormControlStatus
 import com.github.ravenzip.kotlinreactiveforms.data.ValueChangeType
 import com.github.ravenzip.kotlinreactiveforms.extension.addOrRemove
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidatorFn
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 @Stable
 interface FormControl<T> {
@@ -33,6 +35,10 @@ interface MutableFormControl<T> : FormControl<T> {
 
     fun reset(value: T)
 
+    fun disable()
+
+    fun enable()
+
     fun markAsTouched()
 
     fun markAsUntouched()
@@ -46,38 +52,20 @@ internal class MutableFormControlImpl<T>(
     private val initialValue: T,
     private val initiallyDisabled: Boolean = false,
     private val validators: List<ValidatorFn<T>> = emptyList(),
-    coroutineScope: CoroutineScope,
 ) : MutableFormControl<T> {
     private val _disabled: MutableStateFlow<Boolean> = MutableStateFlow(initiallyDisabled)
     private val _touched: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _dirty: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _value: MutableStateFlow<T> = MutableStateFlow(initialValue)
+    private val _errorMessages: MutableStateFlow<List<String>> = MutableStateFlow(validate())
+    private val _status: MutableStateFlow<FormControlStatus> = MutableStateFlow(calculateStatus())
     private val _valueChangeType: MutableStateFlow<ValueChangeType> =
         MutableStateFlow(ValueChangeType.Initialize)
 
-    override val errorMessagesChanges: StateFlow<List<String>> =
-        _value
-            .map { value -> validate(value) }
-            .stateIn(
-                scope = coroutineScope,
-                started = SharingStarted.Eagerly,
-                initialValue = validate(_value.value),
-            )
-
+    override val errorMessagesChanges: StateFlow<List<String>> = _errorMessages.asStateFlow()
     override val valueChanges: StateFlow<T> = _value.asStateFlow()
-
     override val valueChangeTypeChanges: StateFlow<ValueChangeType> = _valueChangeType.asStateFlow()
-
-    override val statusChanges: StateFlow<FormControlStatus> =
-        combine(_disabled, errorMessagesChanges) { disabled, errorMessages ->
-                calculateStatus(disabled, errorMessages)
-            }
-            .stateIn(
-                scope = coroutineScope,
-                started = SharingStarted.Eagerly,
-                initialValue = calculateStatus(_disabled.value, errorMessagesChanges.value),
-            )
-
+    override val statusChanges: StateFlow<FormControlStatus> = _status.asStateFlow()
     override val touchedChanges: StateFlow<Boolean> = _touched.asStateFlow()
     override val dirtyChanges: StateFlow<Boolean> = _dirty.asStateFlow()
 
@@ -105,6 +93,8 @@ internal class MutableFormControlImpl<T>(
     override fun setValue(value: T) {
         _value.update { value }
         _valueChangeType.update { ValueChangeType.Set }
+        _errorMessages.update { validate() }
+        _status.update { calculateStatus() }
     }
 
     override fun reset() = reset(initialValue)
@@ -115,6 +105,18 @@ internal class MutableFormControlImpl<T>(
         _disabled.update { initiallyDisabled }
         _touched.update { false }
         _dirty.update { false }
+        _errorMessages.update { validate() }
+        _status.update { calculateStatus() }
+    }
+
+    override fun disable() {
+        _disabled.update { true }
+        _status.update { calculateStatus() }
+    }
+
+    override fun enable() {
+        _disabled.update { false }
+        _status.update { calculateStatus() }
     }
 
     override fun markAsTouched() = _touched.update { true }
@@ -125,13 +127,13 @@ internal class MutableFormControlImpl<T>(
 
     override fun markAsPristine() = _dirty.update { false }
 
-    private fun validate(value: T): List<String> =
-        validators.mapNotNull { validatorFn -> validatorFn(value) }
+    private fun validate(): List<String> =
+        validators.mapNotNull { validatorFn -> validatorFn(_value.value) }
 
-    private fun calculateStatus(disabled: Boolean, errorMessages: List<String>): FormControlStatus =
+    private fun calculateStatus(): FormControlStatus =
         when {
-            disabled -> FormControlStatus.Disabled
-            errorMessages.isNotEmpty() -> FormControlStatus.Invalid(errorMessages)
+            _disabled.value -> FormControlStatus.Disabled
+            _errorMessages.value.isNotEmpty() -> FormControlStatus.Invalid(_errorMessages.value)
             else -> FormControlStatus.Valid
         }
 }
@@ -140,9 +142,7 @@ fun <T> mutableFormControl(
     initialValue: T,
     initiallyDisabled: Boolean = false,
     validators: List<ValidatorFn<T>> = emptyList(),
-    coroutineScope: CoroutineScope,
-): MutableFormControl<T> =
-    MutableFormControlImpl(initialValue, initiallyDisabled, validators, coroutineScope)
+): MutableFormControl<T> = MutableFormControlImpl(initialValue, initiallyDisabled, validators)
 
 fun <T> MutableFormControl<T>.asReadonly(): FormControl<T> = object : FormControl<T> by this {}
 
