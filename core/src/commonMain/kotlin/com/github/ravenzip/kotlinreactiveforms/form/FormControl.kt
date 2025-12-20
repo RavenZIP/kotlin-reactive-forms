@@ -18,7 +18,7 @@ interface FormControl<T> {
     val dirty: Boolean
     val errorMessages: List<String>
     val valueChanges: StateFlow<T>
-    val typeChanges: StateFlow<ValueChangeType>
+    val valueChangeTypeChanges: StateFlow<ValueChangeType>
     val statusChanges: StateFlow<FormControlStatus>
     val touchedChanges: StateFlow<Boolean>
     val dirtyChanges: StateFlow<Boolean>
@@ -43,53 +43,49 @@ interface MutableFormControl<T> : FormControl<T> {
 }
 
 internal class MutableFormControlImpl<T>(
-    private val _initialValue: T,
-    private val _initiallyDisabled: Boolean = false,
-    private val _validators: List<ValidatorFn<T>> = emptyList(),
-    private val _coroutineScope: CoroutineScope,
+    private val initialValue: T,
+    private val initiallyDisabled: Boolean = false,
+    private val validators: List<ValidatorFn<T>> = emptyList(),
+    coroutineScope: CoroutineScope,
 ) : MutableFormControl<T> {
-    private val _disabled: MutableStateFlow<Boolean> = MutableStateFlow(_initiallyDisabled)
+    private val _disabled: MutableStateFlow<Boolean> = MutableStateFlow(initiallyDisabled)
     private val _touched: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _dirty: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _valueChanges: MutableStateFlow<T> = MutableStateFlow(_initialValue)
-    private val _typeChanges: MutableStateFlow<ValueChangeType> =
+    private val _value: MutableStateFlow<T> = MutableStateFlow(initialValue)
+    private val _valueChangeType: MutableStateFlow<ValueChangeType> =
         MutableStateFlow(ValueChangeType.Initialize)
 
     override val errorMessagesChanges: StateFlow<List<String>> =
-        _valueChanges
-            .map { value -> _validators.mapNotNull { validatorFn -> validatorFn(value) } }
+        _value
+            .map { value -> validate(value) }
             .stateIn(
-                scope = _coroutineScope,
+                scope = coroutineScope,
                 started = SharingStarted.Eagerly,
-                initialValue = emptyList(),
+                initialValue = validate(_value.value),
             )
 
-    override val valueChanges: StateFlow<T> = _valueChanges.asStateFlow()
+    override val valueChanges: StateFlow<T> = _value.asStateFlow()
 
-    override val typeChanges: StateFlow<ValueChangeType> = _typeChanges.asStateFlow()
+    override val valueChangeTypeChanges: StateFlow<ValueChangeType> = _valueChangeType.asStateFlow()
 
     override val statusChanges: StateFlow<FormControlStatus> =
         combine(_disabled, errorMessagesChanges) { disabled, errorMessages ->
-                when {
-                    disabled -> FormControlStatus.Disabled
-                    errorMessages.isNotEmpty() -> FormControlStatus.Invalid(errorMessages)
-                    else -> FormControlStatus.Valid
-                }
+                calculateStatus(disabled, errorMessages)
             }
             .stateIn(
-                scope = _coroutineScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = FormControlStatus.Valid,
+                scope = coroutineScope,
+                started = SharingStarted.Eagerly,
+                initialValue = calculateStatus(_disabled.value, errorMessagesChanges.value),
             )
 
     override val touchedChanges: StateFlow<Boolean> = _touched.asStateFlow()
     override val dirtyChanges: StateFlow<Boolean> = _dirty.asStateFlow()
 
     override val value: T
-        get() = _valueChanges.value
+        get() = _value.value
 
     override val typeChange: ValueChangeType
-        get() = _typeChanges.value
+        get() = _valueChangeType.value
 
     override val status: FormControlStatus
         get() = statusChanges.value
@@ -107,16 +103,16 @@ internal class MutableFormControlImpl<T>(
         get() = errorMessagesChanges.value
 
     override fun setValue(value: T) {
-        _valueChanges.update { value }
-        _typeChanges.update { ValueChangeType.Set }
+        _value.update { value }
+        _valueChangeType.update { ValueChangeType.Set }
     }
 
-    override fun reset() = reset(_initialValue)
+    override fun reset() = reset(initialValue)
 
     override fun reset(value: T) {
-        _valueChanges.update { value }
-        _typeChanges.update { ValueChangeType.Reset }
-        _disabled.update { _initiallyDisabled }
+        _value.update { value }
+        _valueChangeType.update { ValueChangeType.Reset }
+        _disabled.update { initiallyDisabled }
         _touched.update { false }
         _dirty.update { false }
     }
@@ -128,6 +124,16 @@ internal class MutableFormControlImpl<T>(
     override fun markAsDirty() = _dirty.update { true }
 
     override fun markAsPristine() = _dirty.update { false }
+
+    private fun validate(value: T): List<String> =
+        validators.mapNotNull { validatorFn -> validatorFn(value) }
+
+    private fun calculateStatus(disabled: Boolean, errorMessages: List<String>): FormControlStatus =
+        when {
+            disabled -> FormControlStatus.Disabled
+            errorMessages.isNotEmpty() -> FormControlStatus.Invalid(errorMessages)
+            else -> FormControlStatus.Valid
+        }
 }
 
 fun <T> mutableFormControl(

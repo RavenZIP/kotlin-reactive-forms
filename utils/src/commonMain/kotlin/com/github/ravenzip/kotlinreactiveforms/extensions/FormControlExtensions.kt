@@ -10,7 +10,7 @@ val <T> FormControl<T>.currentValueWithTypeChange: ValueWithTypeChange<T>
     get() = ValueWithTypeChange(value, typeChange)
 
 fun <T> FormControl<T>.valueWithTypeChange(): Flow<ValueWithTypeChange<T>> =
-    valueChanges.combine(typeChanges) { value, typeChange ->
+    valueChanges.combine(valueChangeTypeChanges) { value, typeChange ->
         ValueWithTypeChange(value, typeChange)
     }
 
@@ -26,7 +26,7 @@ val <T> FormControl<T>.snapshot: FormControlSnapshot<T>
         )
 
 fun <T> FormControl<T>.snapshotChanges(): Flow<FormControlSnapshot<T>> =
-    combine(valueChanges, typeChanges, statusChanges, touchedChanges, dirtyChanges) {
+    combine(valueChanges, valueChangeTypeChanges, statusChanges, touchedChanges, dirtyChanges) {
         value,
         typeChange,
         status,

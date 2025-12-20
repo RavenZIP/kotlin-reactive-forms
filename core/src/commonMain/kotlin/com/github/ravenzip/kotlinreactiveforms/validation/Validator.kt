@@ -18,8 +18,16 @@ class Validator {
             if (value.length > max) "Максимальная длина $max символа" else null
         }
 
+        fun min(min: Int): ValidatorFn<Int> = { value: Int ->
+            if (value < min) "Минимальное допустимое значение $min" else null
+        }
+
         fun min(min: Double): ValidatorFn<Double> = { value: Double ->
             if (value < min) "Минимальное допустимое значение $min" else null
+        }
+
+        fun max(max: Int): ValidatorFn<Int> = { value: Int ->
+            if (value > max) "Максимальное допустимое значение $max" else null
         }
 
         fun max(max: Double): ValidatorFn<Double> = { value: Double ->
