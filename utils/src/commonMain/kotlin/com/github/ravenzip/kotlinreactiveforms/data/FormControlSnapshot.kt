@@ -2,8 +2,8 @@ package com.github.ravenzip.kotlinreactiveforms.data
 
 data class FormControlSnapshot<T>(
     val value: T,
-    val typeChange: ValueChangeType,
-    val hasChanges: Boolean,
+    val valueChangeType: ValueChangeType,
+    val hasValueChanges: Boolean,
     val status: FormControlStatus,
     val touched: Boolean,
     val dirty: Boolean,
@@ -16,7 +16,7 @@ data class FormControlSnapshot<T>(
     companion object {
         fun <T> create(
             value: T,
-            typeChange: ValueChangeType,
+            valueChangeType: ValueChangeType,
             status: FormControlStatus,
             touched: Boolean,
             dirty: Boolean,
@@ -24,8 +24,8 @@ data class FormControlSnapshot<T>(
         ) =
             FormControlSnapshot(
                 value = value,
-                typeChange = typeChange,
-                hasChanges = !typeChange.isInitialize(),
+                valueChangeType = valueChangeType,
+                hasValueChanges = !valueChangeType.isInitialize(),
                 status = status,
                 touched = touched,
                 dirty = dirty,

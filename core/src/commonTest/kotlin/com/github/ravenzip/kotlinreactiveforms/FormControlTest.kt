@@ -119,6 +119,6 @@ class FormControlTest {
     @Test
     fun `initial typeChange equal Initialize`() = runTest {
         val control = mutableFormControl(initialValue = 0, coroutineScope = backgroundScope)
-        assertEquals(control.typeChange, ValueChangeType.Initialize)
+        assertEquals(control.valueChangeType, ValueChangeType.Initialize)
     }
 }

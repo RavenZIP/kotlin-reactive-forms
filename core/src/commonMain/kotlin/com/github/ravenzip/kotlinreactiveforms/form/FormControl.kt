@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.*
 @Stable
 interface FormControl<T> {
     val value: T
-    val typeChange: ValueChangeType
+    val valueChangeType: ValueChangeType
     val status: FormControlStatus
     val disabled: Boolean
     val touched: Boolean
@@ -84,7 +84,7 @@ internal class MutableFormControlImpl<T>(
     override val value: T
         get() = _value.value
 
-    override val typeChange: ValueChangeType
+    override val valueChangeType: ValueChangeType
         get() = _valueChangeType.value
 
     override val status: FormControlStatus
