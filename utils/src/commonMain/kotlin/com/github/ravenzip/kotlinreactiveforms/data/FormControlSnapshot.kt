@@ -1,5 +1,7 @@
 package com.github.ravenzip.kotlinreactiveforms.data
 
+import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
+
 data class FormControlSnapshot<T>(
     val value: T,
     val valueChangeType: ValueChangeType,
@@ -11,7 +13,7 @@ data class FormControlSnapshot<T>(
     val invalid: Boolean,
     val enabled: Boolean,
     val disabled: Boolean,
-    val errorMessages: List<String>,
+    val errors: List<ValidationError>,
 ) {
     companion object {
         fun <T> create(
@@ -20,7 +22,7 @@ data class FormControlSnapshot<T>(
             status: FormControlStatus,
             touched: Boolean,
             dirty: Boolean,
-            errorMessages: List<String>,
+            errors: List<ValidationError>,
         ) =
             FormControlSnapshot(
                 value = value,
@@ -33,7 +35,7 @@ data class FormControlSnapshot<T>(
                 invalid = status.isInvalid(),
                 enabled = status.isEnabled(),
                 disabled = status.isDisabled(),
-                errorMessages = errorMessages,
+                errors = errors,
             )
     }
 }

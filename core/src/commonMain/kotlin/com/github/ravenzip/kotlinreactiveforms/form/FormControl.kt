@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import com.github.ravenzip.kotlinreactiveforms.data.FormControlStatus
 import com.github.ravenzip.kotlinreactiveforms.data.ValueChangeType
 import com.github.ravenzip.kotlinreactiveforms.extension.addOrRemove
+import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidatorFn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,13 +19,13 @@ interface FormControl<T> {
     val disabled: Boolean
     val touched: Boolean
     val dirty: Boolean
-    val errorMessages: List<String>
+    val errors: List<ValidationError>
     val valueChanges: StateFlow<T>
     val valueChangeTypeChanges: StateFlow<ValueChangeType>
     val statusChanges: StateFlow<FormControlStatus>
     val touchedChanges: StateFlow<Boolean>
     val dirtyChanges: StateFlow<Boolean>
-    val errorMessagesChanges: StateFlow<List<String>>
+    val errorsChanges: StateFlow<List<ValidationError>>
 }
 
 @Stable
@@ -57,12 +58,12 @@ internal class MutableFormControlImpl<T>(
     private val _touched: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _dirty: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _value: MutableStateFlow<T> = MutableStateFlow(initialValue)
-    private val _errorMessages: MutableStateFlow<List<String>> = MutableStateFlow(validate())
+    private val _errors: MutableStateFlow<List<ValidationError>> = MutableStateFlow(validate())
     private val _status: MutableStateFlow<FormControlStatus> = MutableStateFlow(calculateStatus())
     private val _valueChangeType: MutableStateFlow<ValueChangeType> =
         MutableStateFlow(ValueChangeType.Initialize)
 
-    override val errorMessagesChanges: StateFlow<List<String>> = _errorMessages.asStateFlow()
+    override val errorsChanges: StateFlow<List<ValidationError>> = _errors.asStateFlow()
     override val valueChanges: StateFlow<T> = _value.asStateFlow()
     override val valueChangeTypeChanges: StateFlow<ValueChangeType> = _valueChangeType.asStateFlow()
     override val statusChanges: StateFlow<FormControlStatus> = _status.asStateFlow()
@@ -87,13 +88,13 @@ internal class MutableFormControlImpl<T>(
     override val dirty: Boolean
         get() = _dirty.value
 
-    override val errorMessages: List<String>
-        get() = errorMessagesChanges.value
+    override val errors: List<ValidationError>
+        get() = errorsChanges.value
 
     override fun setValue(value: T) {
         _value.update { value }
         _valueChangeType.update { ValueChangeType.Set }
-        _errorMessages.update { validate() }
+        _errors.update { validate() }
         _status.update { calculateStatus() }
     }
 
@@ -105,7 +106,7 @@ internal class MutableFormControlImpl<T>(
         _disabled.update { initiallyDisabled }
         _touched.update { false }
         _dirty.update { false }
-        _errorMessages.update { validate() }
+        _errors.update { validate() }
         _status.update { calculateStatus() }
     }
 
@@ -127,13 +128,13 @@ internal class MutableFormControlImpl<T>(
 
     override fun markAsPristine() = _dirty.update { false }
 
-    private fun validate(): List<String> =
+    private fun validate(): List<ValidationError> =
         validators.mapNotNull { validatorFn -> validatorFn(_value.value) }
 
     private fun calculateStatus(): FormControlStatus =
         when {
             _disabled.value -> FormControlStatus.Disabled
-            _errorMessages.value.isNotEmpty() -> FormControlStatus.Invalid(_errorMessages.value)
+            _errors.value.isNotEmpty() -> FormControlStatus.Invalid(_errors.value)
             else -> FormControlStatus.Valid
         }
 }

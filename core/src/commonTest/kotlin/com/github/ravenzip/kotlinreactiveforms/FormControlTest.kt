@@ -63,24 +63,24 @@ class FormControlTest {
     }
 
     @Test
-    fun `initial errorMessages is empty without validators`() = runTest {
+    fun `initial errors is empty without validators`() = runTest {
         val control = mutableFormControl(initialValue = 0)
 
-        assertTrue(control.errorMessages.isEmpty())
+        assertTrue(control.errors.isEmpty())
     }
 
     @Test
-    fun `initial errorMessages is not empty with validators and wrong value`() = runTest {
+    fun `initial errors is not empty with validators and wrong value`() = runTest {
         val control = mutableFormControl(initialValue = 0, validators = listOf(Validator.min(1)))
 
-        assertTrue(control.errorMessages.isNotEmpty())
+        assertTrue(control.errors.isNotEmpty())
     }
 
     @Test
-    fun `initial errorMessages is empty with validators and correct value`() = runTest {
+    fun `initial errors is empty with validators and correct value`() = runTest {
         val control = mutableFormControl(initialValue = 2, validators = listOf(Validator.min(1)))
 
-        assertTrue(control.errorMessages.isEmpty())
+        assertTrue(control.errors.isEmpty())
     }
 
     @Test
@@ -153,11 +153,11 @@ class FormControlTest {
     }
 
     @Test
-    fun `control have errorMessages after call setValue with invalid value`() = runTest {
+    fun `control have errors after call setValue with invalid value`() = runTest {
         val control = mutableFormControl(initialValue = 10, validators = listOf(Validator.min(1)))
         control.setValue(0)
 
-        assertTrue(control.errorMessages.isNotEmpty())
+        assertTrue(control.errors.isNotEmpty())
     }
 
     @Test
