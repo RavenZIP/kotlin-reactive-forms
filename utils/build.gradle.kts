@@ -1,4 +1,3 @@
-import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -10,8 +9,6 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
 }
 
-version = "0.1.0"
-
 kotlin {
     jvm()
 
@@ -20,7 +17,7 @@ kotlin {
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
-        compilations.configureEach { compilerOptions.configure { jvmTarget.set(JvmTarget.JVM_17) } }
+        compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
     }
 
     @OptIn(ExperimentalWasmDsl::class)
@@ -31,8 +28,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core"))
-            implementation(compose.runtime)
+            implementation(projects.core)
+            implementation(libs.compose.runtime)
             implementation(libs.kotlinx.coroutines)
         }
 
