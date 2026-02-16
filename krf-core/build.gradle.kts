@@ -1,0 +1,41 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+}
+
+kotlin {
+    jvm()
+
+    androidLibrary {
+        namespace = "com.RavenZIP.krf.core"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        outputModuleName.set("krf-core")
+        browser { commonWebpackConfig { outputFileName = "krf-core.js" } }
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.compose.runtime)
+            implementation(libs.kotlinx.coroutines)
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.turbine)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+    }
+}
