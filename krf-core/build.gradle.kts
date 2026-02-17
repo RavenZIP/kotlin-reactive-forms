@@ -20,7 +20,7 @@ kotlin {
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
     }
 
-    js(IR)
+    js(IR) { browser() }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
