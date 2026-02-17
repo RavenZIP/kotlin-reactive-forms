@@ -1,4 +1,4 @@
-package com.ravenzip.kotlinreactiveforms.validation
+package com.github.ravenzip.kotlinreactiveforms.validation
 
 enum class ValidatorName {
     REQUIRED,

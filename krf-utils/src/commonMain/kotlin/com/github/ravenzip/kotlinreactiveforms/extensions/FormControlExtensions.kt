@@ -1,8 +1,8 @@
-package com.ravenzip.kotlinreactiveforms.extensions
+package com.github.ravenzip.kotlinreactiveforms.extensions
 
-import com.ravenzip.kotlinreactiveforms.data.FormControlSnapshot
-import com.ravenzip.kotlinreactiveforms.data.ValueWithTypeChange
-import com.ravenzip.kotlinreactiveforms.form.FormControl
+import com.github.ravenzip.kotlinreactiveforms.data.FormControlSnapshot
+import com.github.ravenzip.kotlinreactiveforms.data.ValueWithTypeChange
+import com.github.ravenzip.kotlinreactiveforms.form.FormControl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map

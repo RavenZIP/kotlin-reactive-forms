@@ -1,4 +1,4 @@
-package com.ravenzip.kotlinreactiveforms.extension
+package com.github.ravenzip.kotlinreactiveforms.extension
 
 internal fun <T, K> List<T>.addOrRemove(value: T, keySelector: (T) -> K): MutableList<T> {
     val current = this.toMutableList()

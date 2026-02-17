@@ -1,6 +1,6 @@
-package com.ravenzip.kotlinreactiveforms.data
+package com.github.ravenzip.kotlinreactiveforms.data
 
-import com.ravenzip.kotlinreactiveforms.validation.ValidationError
+import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
 
 sealed class FormControlStatus {
     object Disabled : FormControlStatus()

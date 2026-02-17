@@ -13,7 +13,7 @@ kotlin {
     jvm()
 
     androidLibrary {
-        namespace = "com.RavenZIP.krf.core"
+        namespace = "com.github.RavenZIP.krf.core"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 

@@ -1,11 +1,11 @@
-package com.ravenzip.kotlinreactiveforms
+package com.github.ravenzip.kotlinreactiveforms
 
-import com.ravenzip.kotlinreactiveforms.data.ValueChangeType
-import com.ravenzip.kotlinreactiveforms.data.isDisabled
-import com.ravenzip.kotlinreactiveforms.data.isInvalid
-import com.ravenzip.kotlinreactiveforms.data.isValid
-import com.ravenzip.kotlinreactiveforms.form.mutableFormControl
-import com.ravenzip.kotlinreactiveforms.validation.Validator
+import com.github.ravenzip.kotlinreactiveforms.data.ValueChangeType
+import com.github.ravenzip.kotlinreactiveforms.data.isDisabled
+import com.github.ravenzip.kotlinreactiveforms.data.isInvalid
+import com.github.ravenzip.kotlinreactiveforms.data.isValid
+import com.github.ravenzip.kotlinreactiveforms.form.mutableFormControl
+import com.github.ravenzip.kotlinreactiveforms.validation.Validator
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
