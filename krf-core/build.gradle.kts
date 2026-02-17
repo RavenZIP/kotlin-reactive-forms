@@ -20,6 +20,8 @@ kotlin {
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
     }
 
+    js(IR)
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         outputModuleName.set("krf-core")
