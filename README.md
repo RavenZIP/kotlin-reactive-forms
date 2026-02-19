@@ -5,7 +5,7 @@
 <img alt="Compose Multiplatform" src="https://img.shields.io/badge/Compose Multiplatform-1.10.1-3b83f8">
 <img alt="Static Badge" src="https://img.shields.io/badge/API-24+-39ad31">
 <a href="https://jitpack.io/#RavenZIP/kotlin-reactive-forms">
-    <img alt="Static Badge" src="https://img.shields.io/badge/JitPack-0.2.0-39ad31">
+  <img src="https://jitpack.io/v/RavenZIP/kotlin-reactive-forms.svg">
 </a>
 </div>
 
