@@ -26,6 +26,7 @@ interface FormControl<T> {
     val touchedChanges: StateFlow<Boolean>
     val dirtyChanges: StateFlow<Boolean>
     val errorsChanges: StateFlow<List<ValidationError>>
+    val hasValidators: Boolean
 }
 
 @Stable
@@ -90,6 +91,8 @@ internal class MutableFormControlImpl<T>(
 
     override val errors: List<ValidationError>
         get() = errorsChanges.value
+
+    override val hasValidators: Boolean = validators.count() > 0
 
     override fun setValue(value: T) {
         _value.update { value }

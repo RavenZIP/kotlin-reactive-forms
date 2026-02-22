@@ -99,6 +99,20 @@ class FormControlTest {
     }
 
     @Test
+    fun `hasValidator true after initialize control with validators`() = runTest {
+        val control = mutableFormControl(initialValue = 0, validators = listOf(Validator.min(1)))
+
+        assertTrue(control.hasValidators)
+    }
+
+    @Test
+    fun `hasValidator false after initialize control without validators`() = runTest {
+        val control = mutableFormControl(initialValue = 0)
+
+        assertFalse(control.hasValidators)
+    }
+
+    @Test
     fun `control enabled after call enable()`() = runTest {
         val control = mutableFormControl(initialValue = 0, initiallyDisabled = true)
         control.enable()
