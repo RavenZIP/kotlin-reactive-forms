@@ -116,11 +116,13 @@ internal class MutableFormControlImpl<T>(
     override fun disable() {
         _disabled.update { true }
         _status.update { calculateStatus() }
+        _errors.update { emptyList() }
     }
 
     override fun enable() {
         _disabled.update { false }
         _status.update { calculateStatus() }
+        _errors.update { validate() }
     }
 
     override fun markAsTouched() = _touched.update { true }
