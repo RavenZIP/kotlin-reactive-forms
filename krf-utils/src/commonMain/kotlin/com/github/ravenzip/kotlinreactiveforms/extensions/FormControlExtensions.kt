@@ -3,37 +3,40 @@ package com.github.ravenzip.kotlinreactiveforms.extensions
 import com.github.ravenzip.kotlinreactiveforms.data.FormControlSnapshot
 import com.github.ravenzip.kotlinreactiveforms.data.ValueWithTypeChange
 import com.github.ravenzip.kotlinreactiveforms.form.FormControl
+import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
-val <T> FormControl<T>.errorMessages: List<String>
+val <TValue, TError : ValidationError> FormControl<TValue, TError>.errorMessages: List<String>
     get() = errors.map { error -> error.message }
 
-val <T> FormControl<T>.firstErrorMessage: String
+val <TValue, TError : ValidationError> FormControl<TValue, TError>.firstErrorMessage: String
     get() = errors.firstOrNull()?.message ?: ""
 
-val <T> FormControl<T>.lastErrorMessage: String
+val <TValue, TError : ValidationError> FormControl<TValue, TError>.lastErrorMessage: String
     get() = errors.lastOrNull()?.message ?: ""
 
-fun <T> FormControl<T>.errorMessagesChanges(): Flow<List<String>> =
+fun <TValue, TError : ValidationError> FormControl<TValue, TError>.errorMessagesChanges():
+    Flow<List<String>> =
     errorsChanges.map { errorsChanges -> errorsChanges.map { error -> error.message } }
 
-fun <T> FormControl<T>.firstErrorMessageChanges(): Flow<String> =
-    errorsChanges.map { errorsChanges -> errorsChanges.firstOrNull()?.message ?: "" }
+fun <TValue, TError : ValidationError> FormControl<TValue, TError>.firstErrorMessageChanges():
+    Flow<String> = errorsChanges.map { errorsChanges -> errorsChanges.firstOrNull()?.message ?: "" }
 
-fun <T> FormControl<T>.lastErrorMessageChanges(): Flow<String> =
-    errorsChanges.map { errorsChanges -> errorsChanges.lastOrNull()?.message ?: "" }
+fun <TValue, TError : ValidationError> FormControl<TValue, TError>.lastErrorMessageChanges():
+    Flow<String> = errorsChanges.map { errorsChanges -> errorsChanges.lastOrNull()?.message ?: "" }
 
-val <T> FormControl<T>.currentValueWithTypeChange: ValueWithTypeChange<T>
+val <T> FormControl<T, ValidationError>.currentValueWithTypeChange: ValueWithTypeChange<T>
     get() = ValueWithTypeChange(value, valueChangeType)
 
-fun <T> FormControl<T>.valueWithTypeChange(): Flow<ValueWithTypeChange<T>> =
+fun <T> FormControl<T, ValidationError>.valueWithTypeChange(): Flow<ValueWithTypeChange<T>> =
     valueChanges.combine(valueChangeTypeChanges) { value, typeChange ->
         ValueWithTypeChange(value, typeChange)
     }
 
-val <T> FormControl<T>.snapshot: FormControlSnapshot<T>
+val <TValue, TError : ValidationError> FormControl<TValue, TError>.snapshot:
+    FormControlSnapshot<TValue, TError>
     get() =
         FormControlSnapshot.create(
             value = value,
@@ -44,7 +47,8 @@ val <T> FormControl<T>.snapshot: FormControlSnapshot<T>
             errors = errors,
         )
 
-fun <T> FormControl<T>.snapshotChanges(): Flow<FormControlSnapshot<T>> =
+fun <TValue, TError : ValidationError> FormControl<TValue, TError>.snapshotChanges():
+    Flow<FormControlSnapshot<TValue, TError>> =
     combine(valueChanges, valueChangeTypeChanges, statusChanges, touchedChanges, dirtyChanges) {
         value,
         typeChange,
