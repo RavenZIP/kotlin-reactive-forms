@@ -3,7 +3,7 @@ package com.github.ravenzip.kotlinreactiveforms.validation
 import com.github.ravenzip.kotlinreactiveforms.utils.emailRegex
 import com.github.ravenzip.kotlinreactiveforms.utils.phoneRegex
 
-fun interface ValidatorFn<TValue, TError : ValidationError> {
+fun interface ValidatorFn<TValue, out TError : ValidationError> {
     operator fun invoke(value: TValue): TError?
 }
 
