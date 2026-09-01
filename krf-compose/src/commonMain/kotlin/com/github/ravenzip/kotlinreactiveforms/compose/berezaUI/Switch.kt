@@ -14,6 +14,7 @@ import com.github.ravenzip.berezaUI.core.components.switch.SwitchGroup
 import com.github.ravenzip.berezaUI.core.components.switch.SwitchWithText
 import com.github.ravenzip.kotlinreactiveforms.compose.shared.collectAsComponentState
 import com.github.ravenzip.kotlinreactiveforms.form.MutableFormControl
+import com.github.ravenzip.kotlinreactiveforms.form.mergeValue
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
 
 @Composable
@@ -59,14 +60,8 @@ fun <T, K : Any> SwitchGroup(
     SwitchGroup(
         source = source,
         selectedItems = state.value,
-        onSelectedItemChange = { selectedItem ->
-            val selectedItemKey = keySelector(selectedItem)
-            val selected = state.value.any { item -> keySelector(item) == selectedItemKey }
-            val newSelectedItems =
-                if (selected) state.value.filterNot { item -> keySelector(item) == selectedItemKey }
-                else state.value + selectedItem
-
-            control.setValue(newSelectedItems)
+        onSelectedItemChange = { item ->
+            control.mergeValue(item, keySelector)
             control.markAsTouched()
         },
         keySelector = keySelector,
