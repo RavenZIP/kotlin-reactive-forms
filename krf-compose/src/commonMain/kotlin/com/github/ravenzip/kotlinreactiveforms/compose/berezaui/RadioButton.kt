@@ -1,4 +1,4 @@
-package com.github.ravenzip.kotlinreactiveforms.compose.berezaUI
+package com.github.ravenzip.kotlinreactiveforms.compose.berezaui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

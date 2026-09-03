@@ -1,50 +1,50 @@
-package com.github.ravenzip.kotlinreactiveforms.compose.berezaUI
+package com.github.ravenzip.kotlinreactiveforms.compose.berezaui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CheckboxColors
-import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.SwitchColors
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.github.ravenzip.berezaUI.core.components.checkbox.CheckboxGroup
-import com.github.ravenzip.berezaUI.core.components.checkbox.CheckboxWithText
+import com.github.ravenzip.berezaUI.core.components.switch.SwitchGroup
+import com.github.ravenzip.berezaUI.core.components.switch.SwitchWithText
 import com.github.ravenzip.kotlinreactiveforms.compose.shared.collectAsComponentState
 import com.github.ravenzip.kotlinreactiveforms.form.MutableFormControl
 import com.github.ravenzip.kotlinreactiveforms.form.mergeValue
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
 
 @Composable
-fun CheckboxWithText(
+fun SwitchWithText(
     control: MutableFormControl<Boolean, ValidationError>,
     modifier: Modifier = Modifier,
     text: @Composable () -> Unit,
-    colors: CheckboxColors = CheckboxDefaults.colors(),
     padding: PaddingValues = PaddingValues(15.dp),
+    colors: SwitchColors = SwitchDefaults.colors(),
     shape: Shape = RoundedCornerShape(14.dp),
 ) {
     val state by control.collectAsComponentState()
 
-    CheckboxWithText(
+    SwitchWithText(
         selected = state.value,
+        enabled = state.enabled,
         onClick = {
             control.setValue(!control.value)
             control.markAsDirty()
         },
         modifier = modifier,
         text = text,
-        enabled = state.enabled,
-        colors = colors,
         padding = padding,
+        colors = colors,
         shape = shape,
     )
 }
 
 @Composable
-fun <T, K : Any> CheckboxGroup(
+fun <T, K : Any> SwitchGroup(
     control: MutableFormControl<List<T>, ValidationError>,
     source: List<T>,
     keySelector: (T) -> K,
@@ -53,11 +53,11 @@ fun <T, K : Any> CheckboxGroup(
     contentPadding: Arrangement.Vertical = Arrangement.spacedBy(10.dp),
     padding: PaddingValues = PaddingValues(15.dp),
     shape: Shape = RoundedCornerShape(14.dp),
-    colors: CheckboxColors = CheckboxDefaults.colors(),
+    colors: SwitchColors = SwitchDefaults.colors(),
 ) {
     val state by control.collectAsComponentState()
 
-    CheckboxGroup(
+    SwitchGroup(
         source = source,
         selectedItems = state.value,
         onSelectedItemChange = { item ->

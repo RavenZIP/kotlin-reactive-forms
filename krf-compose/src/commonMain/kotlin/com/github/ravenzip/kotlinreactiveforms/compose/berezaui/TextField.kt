@@ -1,4 +1,4 @@
-package com.github.ravenzip.kotlinreactiveforms.compose.berezaUI
+package com.github.ravenzip.kotlinreactiveforms.compose.berezaui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
