@@ -1,2 +1,7 @@
 jdk:
   - openjdk17
+  -
+install:
+  - ./gradlew :krf-core:publishToMavenLocal
+  - ./gradlew :krf-utils:publishToMavenLocal
+  - ./gradlew :krf-compose:publishToMavenLocal

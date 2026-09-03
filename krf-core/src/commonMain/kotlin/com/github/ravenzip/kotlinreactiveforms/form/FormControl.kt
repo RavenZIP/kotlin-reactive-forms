@@ -133,8 +133,9 @@ internal class MutableFormControlImpl<TValue, out TError : ValidationError>(
 
     override fun markAsPristine() = _dirty.update { false }
 
-    private fun validate(): List<TError> =
-        validators.mapNotNull { validatorFn -> validatorFn(_value.value) }
+    private fun validate(): List<TError> = validators.mapNotNull { validatorFn ->
+        validatorFn(_value.value)
+    }
 
     private fun calculateStatus(): FormControlStatus =
         when {
@@ -160,6 +161,7 @@ fun <TValue> mutableFormControl(
 fun <TValue, TError : ValidationError> MutableFormControl<TValue, TError>.asReadonly():
     FormControl<TValue, TError> = object : FormControl<TValue, TError> by this {}
 
+// TODO переименовать, плохой нейминг
 fun <TValue, TError : ValidationError, TKey> MutableFormControl<List<TValue>, TError>.mergeValue(
     value: TValue,
     keySelector: (TValue) -> TKey,
