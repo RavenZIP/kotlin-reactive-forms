@@ -1,9 +1,10 @@
 package com.github.ravenzip.kotlinreactiveforms.form
 
 import androidx.compose.runtime.Stable
+import com.github.ravenzip.kotlinreactiveforms.data.FormControlState
 import com.github.ravenzip.kotlinreactiveforms.data.FormControlStatus
 import com.github.ravenzip.kotlinreactiveforms.data.ValueChangeType
-import com.github.ravenzip.kotlinreactiveforms.extension.addOrRemove
+import com.github.ravenzip.kotlinreactiveforms.data.disabled
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidatorFn
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,18 +16,10 @@ import kotlinx.coroutines.flow.update
 interface FormControl<TValue, out TError : ValidationError> {
     val value: TValue
     val valueChangeType: ValueChangeType
-    val status: FormControlStatus
-    val disabled: Boolean
+    val status: FormControlStatus<TError>
     val touched: Boolean
     val dirty: Boolean
-    val errors: List<TError>
-    val valueChanges: StateFlow<TValue>
-    val valueChangeTypeChanges: StateFlow<ValueChangeType>
-    val statusChanges: StateFlow<FormControlStatus>
-    val touchedChanges: StateFlow<Boolean>
-    val dirtyChanges: StateFlow<Boolean>
-    val errorsChanges: StateFlow<List<TError>>
-    val hasValidators: Boolean
+    val stateChanges: StateFlow<FormControlState<TValue, TError>>
 }
 
 @Stable
@@ -50,125 +43,111 @@ interface MutableFormControl<TValue, out TError : ValidationError> : FormControl
     fun markAsPristine()
 }
 
+// TODO Возможно, что disabled все-таки должно быть отдельным полем
+// Текущая реализация может сыграть злую шутку, если появится статус Pending и асинхронные
+// валидаторы
 internal class MutableFormControlImpl<TValue, out TError : ValidationError>(
     private val initialValue: TValue,
-    private val initiallyDisabled: Boolean = false,
+    private val disabled: Boolean = false,
     private val validators: List<ValidatorFn<TValue, TError>> = emptyList(),
 ) : MutableFormControl<TValue, TError> {
-    private val _disabled: MutableStateFlow<Boolean> = MutableStateFlow(initiallyDisabled)
-    private val _touched: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _dirty: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _value: MutableStateFlow<TValue> = MutableStateFlow(initialValue)
-    private val _errors: MutableStateFlow<List<TError>> = MutableStateFlow(validate())
-    private val _status: MutableStateFlow<FormControlStatus> = MutableStateFlow(calculateStatus())
-    private val _valueChangeType: MutableStateFlow<ValueChangeType> =
-        MutableStateFlow(ValueChangeType.Initialize)
-
-    override val errorsChanges: StateFlow<List<TError>> = _errors.asStateFlow()
-    override val valueChanges: StateFlow<TValue> = _value.asStateFlow()
-    override val valueChangeTypeChanges: StateFlow<ValueChangeType> = _valueChangeType.asStateFlow()
-    override val statusChanges: StateFlow<FormControlStatus> = _status.asStateFlow()
-    override val touchedChanges: StateFlow<Boolean> = _touched.asStateFlow()
-    override val dirtyChanges: StateFlow<Boolean> = _dirty.asStateFlow()
+    private val _state: MutableStateFlow<FormControlState<TValue, TError>> =
+        MutableStateFlow(
+            FormControlState(
+                value = initialValue,
+                status = computeStatus(initialValue, disabled),
+            )
+        )
 
     override val value: TValue
-        get() = _value.value
+        get() = _state.value.value
 
     override val valueChangeType: ValueChangeType
-        get() = _valueChangeType.value
+        get() = _state.value.valueChangeType
 
-    override val status: FormControlStatus
-        get() = statusChanges.value
-
-    override val disabled: Boolean
-        get() = _disabled.value
+    override val status: FormControlStatus<TError>
+        get() = _state.value.status
 
     override val touched: Boolean
-        get() = _touched.value
+        get() = _state.value.touched
 
     override val dirty: Boolean
-        get() = _dirty.value
+        get() = _state.value.dirty
 
-    override val errors: List<TError>
-        get() = errorsChanges.value
-
-    override val hasValidators: Boolean = validators.count() > 0
+    override val stateChanges: StateFlow<FormControlState<TValue, TError>> = _state.asStateFlow()
 
     override fun setValue(value: TValue) {
-        _value.update { value }
-        _valueChangeType.update { ValueChangeType.Set }
-        _errors.update { validate() }
-        _status.update { calculateStatus() }
+        _state.update { state ->
+            state.copy(
+                value = value,
+                valueChangeType = ValueChangeType.Set,
+                status = computeStatus(value, state.status.disabled),
+            )
+        }
     }
 
     override fun reset() = reset(initialValue)
 
     override fun reset(value: TValue) {
-        _value.update { value }
-        _valueChangeType.update { ValueChangeType.Reset }
-        _disabled.update { initiallyDisabled }
-        _touched.update { false }
-        _dirty.update { false }
-        _errors.update { validate() }
-        _status.update { calculateStatus() }
+        _state.update { state ->
+            state.copy(
+                value = value,
+                valueChangeType = ValueChangeType.Reset,
+                status = computeStatus(value, disabled),
+                touched = false,
+                dirty = false,
+            )
+        }
     }
 
     override fun disable() {
-        _disabled.update { true }
-        _status.update { calculateStatus() }
-        _errors.update { emptyList() }
+        _state.update { state -> state.copy(status = FormControlStatus.Disabled) }
     }
 
     override fun enable() {
-        _disabled.update { false }
-        _status.update { calculateStatus() }
-        _errors.update { validate() }
+        _state.update { current -> current.copy(status = computeStatus(current.value)) }
     }
 
-    override fun markAsTouched() = _touched.update { true }
+    override fun markAsTouched() = _state.update { state -> state.copy(touched = true) }
 
-    override fun markAsUntouched() = _touched.update { false }
+    override fun markAsUntouched() = _state.update { state -> state.copy(touched = false) }
 
-    override fun markAsDirty() = _dirty.update { true }
+    override fun markAsDirty() = _state.update { state -> state.copy(dirty = true) }
 
-    override fun markAsPristine() = _dirty.update { false }
+    override fun markAsPristine() = _state.update { state -> state.copy(dirty = false) }
 
-    private fun validate(): List<TError> = validators.mapNotNull { validatorFn ->
-        validatorFn(_value.value)
-    }
-
-    private fun calculateStatus(): FormControlStatus =
-        when {
-            _disabled.value -> FormControlStatus.Disabled
-            _errors.value.isNotEmpty() -> FormControlStatus.Invalid(_errors.value)
-            else -> FormControlStatus.Valid
+    private fun computeStatus(value: TValue, disabled: Boolean = false): FormControlStatus<TError> {
+        if (disabled) {
+            return FormControlStatus.Disabled
         }
+
+        val errors = validate(value)
+        if (errors.isNotEmpty()) {
+            return FormControlStatus.Invalid(errors)
+        }
+
+        return FormControlStatus.Valid
+    }
+
+    private fun validate(value: TValue): List<TError> = validators.mapNotNull { validatorFn ->
+        validatorFn(value)
+    }
 }
 
 fun <TValue, TError : ValidationError> mutableFormControl(
     initialValue: TValue,
-    initiallyDisabled: Boolean = false,
+    disabled: Boolean = false,
     validators: List<ValidatorFn<TValue, TError>>,
-): MutableFormControl<TValue, TError> =
-    MutableFormControlImpl(initialValue, initiallyDisabled, validators)
+): MutableFormControl<TValue, TError> = MutableFormControlImpl(initialValue, disabled, validators)
 
 fun <TValue> mutableFormControl(
     initialValue: TValue,
-    initiallyDisabled: Boolean = false,
+    disabled: Boolean = false,
 ): MutableFormControl<TValue, ValidationError> =
-    MutableFormControlImpl(initialValue, initiallyDisabled, emptyList())
+    MutableFormControlImpl(initialValue, disabled, emptyList())
 
 fun <TValue, TError : ValidationError> MutableFormControl<TValue, TError>.asReadonly():
     FormControl<TValue, TError> = object : FormControl<TValue, TError> by this {}
-
-// TODO переименовать, плохой нейминг
-fun <TValue, TError : ValidationError, TKey> MutableFormControl<List<TValue>, TError>.mergeValue(
-    value: TValue,
-    keySelector: (TValue) -> TKey,
-) {
-    val currentValues = this.value.addOrRemove(value, keySelector)
-    setValue(currentValues)
-}
 
 fun <TValue, TError : ValidationError> MutableFormControl<List<TValue>, TError>.setValue(
     vararg values: TValue

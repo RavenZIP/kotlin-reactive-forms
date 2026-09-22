@@ -1,9 +1,6 @@
 package com.github.ravenzip.kotlinreactiveforms
 
-import com.github.ravenzip.kotlinreactiveforms.data.ValueChangeType
-import com.github.ravenzip.kotlinreactiveforms.data.isDisabled
-import com.github.ravenzip.kotlinreactiveforms.data.isInvalid
-import com.github.ravenzip.kotlinreactiveforms.data.isValid
+import com.github.ravenzip.kotlinreactiveforms.data.*
 import com.github.ravenzip.kotlinreactiveforms.form.mutableFormControl
 import com.github.ravenzip.kotlinreactiveforms.validation.Validator
 import kotlinx.coroutines.test.runTest
@@ -12,19 +9,21 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+// TODO разобраться с тестами. Возможно, стоит их пересмотреть, но только после окончательной правки
+// архитектуры
 class FormControlTest {
     @Test
     fun `initial disabled is false when initiallyDisabled is false`() = runTest {
         val control = mutableFormControl(initialValue = 0)
 
-        assertFalse(control.disabled)
+        assertFalse(control.status.disabled)
     }
 
     @Test
     fun `initial disabled is true when initiallyDisabled is true`() = runTest {
-        val control = mutableFormControl(initialValue = 0, initiallyDisabled = true)
+        val control = mutableFormControl(initialValue = 0, disabled = true)
 
-        assertTrue(control.disabled)
+        assertTrue(control.status.disabled)
     }
 
     @Test
@@ -45,28 +44,34 @@ class FormControlTest {
     fun `initial status is valid without validators`() = runTest {
         val control = mutableFormControl(initialValue = 0)
 
-        assertTrue(control.status.isValid())
+        assertTrue(control.status.valid)
     }
 
     @Test
     fun `initial status is invalid with validators and wrong value`() = runTest {
         val control = mutableFormControl(initialValue = 0, validators = listOf(Validator.min(1)))
 
-        assertTrue(control.status.isInvalid())
+        assertTrue(control.status.invalid)
     }
 
     @Test
     fun `initial status is valid with validators and correct value`() = runTest {
         val control = mutableFormControl(initialValue = 2, validators = listOf(Validator.min(1)))
 
-        assertTrue(control.status.isValid())
+        assertTrue(control.status.valid)
     }
 
     @Test
     fun `initial errors is empty without validators`() = runTest {
         val control = mutableFormControl(initialValue = 0)
 
-        assertTrue(control.errors.isEmpty())
+        // Smart cast to 'FormControlStatus.Invalid<ValidationError>' is impossible,
+        // because 'status' is a property that has an open or custom getter
+        if (control.status is FormControlStatus.Invalid) {
+            control.status.errors
+        }
+
+        assertTrue(control.status is FormControlStatus.Invalid && control.status.errors)
     }
 
     @Test
@@ -99,25 +104,11 @@ class FormControlTest {
     }
 
     @Test
-    fun `hasValidator true after initialize control with validators`() = runTest {
-        val control = mutableFormControl(initialValue = 0, validators = listOf(Validator.min(1)))
-
-        assertTrue(control.hasValidators)
-    }
-
-    @Test
-    fun `hasValidator false after initialize control without validators`() = runTest {
-        val control = mutableFormControl(initialValue = 0)
-
-        assertFalse(control.hasValidators)
-    }
-
-    @Test
     fun `control enabled after call enable()`() = runTest {
-        val control = mutableFormControl(initialValue = 0, initiallyDisabled = true)
+        val control = mutableFormControl(initialValue = 0, disabled = true)
         control.enable()
 
-        assertFalse(control.disabled)
+        assertFalse(control.status.disabled)
     }
 
     @Test
@@ -125,7 +116,7 @@ class FormControlTest {
         val control = mutableFormControl(initialValue = 0)
         control.disable()
 
-        assertTrue(control.disabled)
+        assertTrue(control.status.disabled)
     }
 
     @Test
@@ -133,7 +124,7 @@ class FormControlTest {
         val control = mutableFormControl(initialValue = 0)
         control.disable()
 
-        assertTrue(control.status.isDisabled())
+        assertTrue(control.status.disabled)
     }
 
     @Test
@@ -141,12 +132,12 @@ class FormControlTest {
         val control =
             mutableFormControl(
                 initialValue = 0,
-                initiallyDisabled = true,
+                disabled = true,
                 validators = listOf(Validator.min(1)),
             )
         control.enable()
 
-        assertTrue(control.status.isInvalid())
+        assertTrue(control.status.invalid)
     }
 
     @Test
@@ -179,6 +170,6 @@ class FormControlTest {
         val control = mutableFormControl(initialValue = 10, validators = listOf(Validator.min(1)))
         control.setValue(0)
 
-        assertTrue(control.status.isInvalid())
+        assertTrue(control.status.invalid)
     }
 }
