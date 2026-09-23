@@ -9,12 +9,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.github.ravenzip.berezaUI.core.data.ComponentErrorState
+import com.github.ravenzip.kotlinreactiveforms.data.FormControlState
 import com.github.ravenzip.kotlinreactiveforms.data.FormControlStatus
-import com.github.ravenzip.kotlinreactiveforms.data.isEnabled
+import com.github.ravenzip.kotlinreactiveforms.data.enabled
+import com.github.ravenzip.kotlinreactiveforms.data.extractErrors
 import com.github.ravenzip.kotlinreactiveforms.form.FormControl
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 @Stable
 data class ComponentState<T>(
@@ -23,33 +25,33 @@ data class ComponentState<T>(
     val errorState: ComponentErrorState,
 )
 
-fun <T> computeComponentState(
-    value: T,
-    status: FormControlStatus,
-    dirty: Boolean,
-    touched: Boolean,
-): ComponentState<T> {
+fun <T> computeComponentState(state: FormControlState<T, ValidationError>): ComponentState<T> {
     val errorState =
-        when (status) {
+        when (state.status) {
             FormControlStatus.Disabled,
             FormControlStatus.Valid -> {
                 ComponentErrorState.Ok
             }
 
             is FormControlStatus.Invalid -> {
-                // Не упадем, потому что в случае статуса Invalid текст ошибки должен быть всегда
-                val errorMessage = status.errors.first().message
-
-                if (dirty || touched) ComponentErrorState.Error(errorMessage)
-                else ComponentErrorState.Ok
+                if (state.dirty || state.touched) {
+                    val errorMessage = state.status.extractErrors().first().message
+                    ComponentErrorState.Error(errorMessage)
+                } else {
+                    ComponentErrorState.Ok
+                }
             }
         }
 
-    return ComponentState(value = value, enabled = status.isEnabled(), errorState = errorState)
+    return ComponentState(
+        value = state.value,
+        enabled = state.status.enabled,
+        errorState = errorState,
+    )
 }
 
 fun <TValue> FormControl<TValue, ValidationError>.computeComponentState(): ComponentState<TValue> =
-    computeComponentState(value = value, status = status, touched = touched, dirty = dirty)
+    computeComponentState(FormControlState(value = value, status = status))
 
 @Composable
 fun <TValue> FormControl<TValue, ValidationError>.collectAsComponentState(
@@ -72,18 +74,9 @@ fun <TValue> FormControl<TValue, ValidationError>.collectAsComponentState(
 ): State<ComponentState<TValue>> =
     produceState(this.computeComponentState(), this) {
         lifecycle.repeatOnLifecycle(minActiveState) {
-            combine(valueChanges, statusChanges, touchedChanges, dirtyChanges) {
-                    value,
-                    status,
-                    touched,
-                    dirty ->
-                    computeComponentState(
-                        value = value,
-                        status = status,
-                        touched = touched,
-                        dirty = dirty,
-                    )
-                }
+            stateChanges
+                .map { state -> computeComponentState(state) }
+                // TODO сделать ли distinct по каждому ключу?
                 .distinctUntilChanged()
                 .collect { x -> value = x }
         }
