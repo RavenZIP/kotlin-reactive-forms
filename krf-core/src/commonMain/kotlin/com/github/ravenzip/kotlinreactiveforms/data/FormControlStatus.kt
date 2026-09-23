@@ -22,3 +22,6 @@ val <TError : ValidationError> FormControlStatus<TError>.invalid: Boolean
 
 val <TError : ValidationError> FormControlStatus<TError>.valid: Boolean
     get() = this is FormControlStatus.Valid
+
+fun <TError : ValidationError> FormControlStatus<TError>.extractErrors(): List<TError> =
+    if (this is FormControlStatus.Invalid) this.errors else emptyList()

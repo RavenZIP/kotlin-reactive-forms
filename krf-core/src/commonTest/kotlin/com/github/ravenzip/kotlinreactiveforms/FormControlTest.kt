@@ -3,11 +3,11 @@ package com.github.ravenzip.kotlinreactiveforms
 import com.github.ravenzip.kotlinreactiveforms.data.*
 import com.github.ravenzip.kotlinreactiveforms.form.mutableFormControl
 import com.github.ravenzip.kotlinreactiveforms.validation.Validator
-import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.runTest
 
 // TODO разобраться с тестами. Возможно, стоит их пересмотреть, но только после окончательной правки
 // архитектуры
@@ -65,27 +65,21 @@ class FormControlTest {
     fun `initial errors is empty without validators`() = runTest {
         val control = mutableFormControl(initialValue = 0)
 
-        // Smart cast to 'FormControlStatus.Invalid<ValidationError>' is impossible,
-        // because 'status' is a property that has an open or custom getter
-        if (control.status is FormControlStatus.Invalid) {
-            control.status.errors
-        }
-
-        assertTrue(control.status is FormControlStatus.Invalid && control.status.errors)
+        assertTrue(control.status.extractErrors().isEmpty())
     }
 
     @Test
     fun `initial errors is not empty with validators and wrong value`() = runTest {
         val control = mutableFormControl(initialValue = 0, validators = listOf(Validator.min(1)))
 
-        assertTrue(control.errors.isNotEmpty())
+        assertTrue(control.status.extractErrors().isNotEmpty())
     }
 
     @Test
     fun `initial errors is empty with validators and correct value`() = runTest {
         val control = mutableFormControl(initialValue = 2, validators = listOf(Validator.min(1)))
 
-        assertTrue(control.errors.isEmpty())
+        assertTrue(control.status.extractErrors().isEmpty())
     }
 
     @Test
@@ -93,7 +87,7 @@ class FormControlTest {
         val initialValue = 0
         val control = mutableFormControl(initialValue = initialValue)
 
-        assertEquals(control.value, initialValue)
+        assertEquals(initialValue, control.value)
     }
 
     @Test
@@ -162,7 +156,7 @@ class FormControlTest {
         val control = mutableFormControl(initialValue = 10, validators = listOf(Validator.min(1)))
         control.setValue(0)
 
-        assertTrue(control.errors.isNotEmpty())
+        assertTrue(control.status.extractErrors().isNotEmpty())
     }
 
     @Test
