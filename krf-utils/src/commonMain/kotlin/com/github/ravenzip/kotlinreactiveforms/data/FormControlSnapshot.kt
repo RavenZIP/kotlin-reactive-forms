@@ -6,7 +6,7 @@ data class FormControlSnapshot<TValue, TError : ValidationError>(
     val value: TValue,
     val valueChangeType: ValueChangeType,
     val hasValueChanges: Boolean,
-    val status: FormControlStatus,
+    val status: FormControlStatus<TError>,
     val touched: Boolean,
     val dirty: Boolean,
     val valid: Boolean,
@@ -19,10 +19,9 @@ data class FormControlSnapshot<TValue, TError : ValidationError>(
         fun <TValue, TError : ValidationError> create(
             value: TValue,
             valueChangeType: ValueChangeType,
-            status: FormControlStatus,
+            status: FormControlStatus<TError>,
             touched: Boolean,
             dirty: Boolean,
-            errors: List<TError>,
         ) =
             FormControlSnapshot(
                 value = value,
@@ -31,11 +30,11 @@ data class FormControlSnapshot<TValue, TError : ValidationError>(
                 status = status,
                 touched = touched,
                 dirty = dirty,
-                valid = status.isValid(),
-                invalid = status.isInvalid(),
-                enabled = status.isEnabled(),
-                disabled = status.isDisabled(),
-                errors = errors,
+                valid = status.valid,
+                invalid = status.invalid,
+                enabled = status.enabled,
+                disabled = status.disabled,
+                errors = status.extractErrors(),
             )
     }
 }
