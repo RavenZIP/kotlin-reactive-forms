@@ -76,36 +76,32 @@ internal class MutableFormControlImpl<TValue, out TError : ValidationError>(
 
     override val stateChanges: StateFlow<FormControlState<TValue, TError>> = _state.asStateFlow()
 
-    override fun setValue(value: TValue) {
-        _state.update { state ->
-            state.copy(
-                value = value,
-                valueChangeType = ValueChangeType.Set,
-                status = computeStatus(value, state.status.disabled),
-            )
-        }
+    override fun setValue(value: TValue) = _state.update { state ->
+        state.copy(
+            value = value,
+            valueChangeType = ValueChangeType.Set,
+            status = computeStatus(value, state.status.disabled),
+        )
     }
 
     override fun reset() = reset(initialValue)
 
-    override fun reset(value: TValue) {
-        _state.update { state ->
-            state.copy(
-                value = value,
-                valueChangeType = ValueChangeType.Reset,
-                status = computeStatus(value, disabled),
-                touched = false,
-                dirty = false,
-            )
-        }
+    override fun reset(value: TValue) = _state.update { state ->
+        state.copy(
+            value = value,
+            valueChangeType = ValueChangeType.Reset,
+            status = computeStatus(value, disabled),
+            touched = false,
+            dirty = false,
+        )
     }
 
-    override fun disable() {
-        _state.update { state -> state.copy(status = FormControlStatus.Disabled) }
+    override fun disable() = _state.update { state ->
+        state.copy(status = FormControlStatus.Disabled)
     }
 
-    override fun enable() {
-        _state.update { current -> current.copy(status = computeStatus(current.value)) }
+    override fun enable() = _state.update { current ->
+        current.copy(status = computeStatus(current.value, false))
     }
 
     override fun markAsTouched() = _state.update { state -> state.copy(touched = true) }
@@ -116,7 +112,7 @@ internal class MutableFormControlImpl<TValue, out TError : ValidationError>(
 
     override fun markAsPristine() = _state.update { state -> state.copy(dirty = false) }
 
-    private fun computeStatus(value: TValue, disabled: Boolean = false): FormControlStatus<TError> {
+    private fun computeStatus(value: TValue, disabled: Boolean): FormControlStatus<TError> {
         if (disabled) {
             return FormControlStatus.Disabled
         }
