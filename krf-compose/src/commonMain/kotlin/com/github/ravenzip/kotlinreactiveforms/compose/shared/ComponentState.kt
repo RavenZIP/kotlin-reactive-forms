@@ -24,7 +24,10 @@ data class ComponentState<T>(
     val errorState: ComponentErrorState,
 )
 
-fun <T> computeComponentState(state: FormControlState<T, ValidationError>): ComponentState<T> {
+fun <T> computeComponentState(
+    state: FormControlState<T, ValidationError>,
+    errorMessageProvider: ((ValidationError) -> String)? = null,
+): ComponentState<T> {
     val errorState =
         when (val status = state.status) {
             FormControlStatus.Disabled,
@@ -33,10 +36,10 @@ fun <T> computeComponentState(state: FormControlState<T, ValidationError>): Comp
             }
 
             is FormControlStatus.Invalid -> {
-                if (state.dirty || state.touched) {
+                if (errorMessageProvider != null && (state.dirty || state.touched)) {
                     // Не упадем, потому что в случае статуса Invalid текст ошибки должен быть
                     // всегда
-                    val errorMessage = status.errors.first().message
+                    val errorMessage = errorMessageProvider(status.errors.first())
                     ComponentErrorState.Error(errorMessage)
                 } else {
                     ComponentErrorState.Ok
@@ -51,14 +54,18 @@ fun <T> computeComponentState(state: FormControlState<T, ValidationError>): Comp
     )
 }
 
-fun <TValue> FormControl<TValue, ValidationError>.computeComponentState(): ComponentState<TValue> =
-    computeComponentState(FormControlState(value = value, status = status))
+fun <TValue> FormControl<TValue, ValidationError>.computeComponentState(
+    errorMessageProvider: ((ValidationError) -> String)? = null
+): ComponentState<TValue> =
+    computeComponentState(FormControlState(value = value, status = status), errorMessageProvider)
 
 @Composable
 fun <TValue> FormControl<TValue, ValidationError>.collectAsComponentState(
+    errorMessageProvider: ((ValidationError) -> String)? = null,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
-): State<ComponentState<TValue>> = collectAsComponentState(lifecycleOwner.lifecycle, minActiveState)
+): State<ComponentState<TValue>> =
+    collectAsComponentState(errorMessageProvider, lifecycleOwner.lifecycle, minActiveState)
 
 /**
  * Согласно документации, с недавнего времени Lifecycle появился и на остальных платформах, кроме
@@ -70,13 +77,14 @@ fun <TValue> FormControl<TValue, ValidationError>.collectAsComponentState(
  */
 @Composable
 fun <TValue> FormControl<TValue, ValidationError>.collectAsComponentState(
+    errorMessageProvider: ((ValidationError) -> String)? = null,
     lifecycle: Lifecycle,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
 ): State<ComponentState<TValue>> =
-    produceState(this.computeComponentState(), this) {
+    produceState(this.computeComponentState(errorMessageProvider), this) {
         lifecycle.repeatOnLifecycle(minActiveState) {
             stateChanges
-                .map { state -> computeComponentState(state) }
+                .map { state -> computeComponentState(state, errorMessageProvider) }
                 .distinctUntilChanged()
                 .collect { x -> value = x }
         }

@@ -1,23 +1,22 @@
 [versions]
-agp = "9.0.0"
+agp = "9.1.1"
 
-android-compileSdk = "36"
+android-compileSdk = "37"
 android-minSdk = "24"
 androidx-lifecycle = "2.11.0"
 
-kotlin = "2.3.10"
-kotlinx-coroutines = "1.10.2"
+kotlin = "2.4.20"
+kotlinx-coroutines = "1.11.0"
 
-composeHotReload = "1.0.0"
 composeMultiplatform = "1.12.0"
 material3 = "1.12.0-alpha03"
 
 turbine = "1.2.1"
 junit = "4.13.2"
 
-vanniktechMavenPublish = "0.36.0"
+vanniktechMavenPublish = "0.37.0"
 
-ravenzip-bereza-ui = "0.4.0"
+ravenzip-bereza-ui = "0.5.0"
 
 [libraries]
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
@@ -42,7 +41,6 @@ ravenzip-bereza-ui-core = { module = "com.github.RavenZIP.bereza-ui:bereza-core"
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }

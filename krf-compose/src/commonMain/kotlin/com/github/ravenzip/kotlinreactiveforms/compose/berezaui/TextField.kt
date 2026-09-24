@@ -13,8 +13,8 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.github.ravenzip.berezaUI.core.components.textfield.basic.BasicOutlinedTextField
-import com.github.ravenzip.berezaUI.core.components.textfield.basic.BasicTextField
+import com.github.ravenzip.berezaUI.core.components.textfield.OutlinedTextFieldWithSupportingRow
+import com.github.ravenzip.berezaUI.core.components.textfield.TextFieldWithSupportingRow
 import com.github.ravenzip.berezaUI.core.components.textfield.dropdown.AutocompleteTextField
 import com.github.ravenzip.berezaUI.core.components.textfield.dropdown.OutlinedAutocompleteTextField
 import com.github.ravenzip.berezaUI.core.data.*
@@ -23,11 +23,13 @@ import com.github.ravenzip.kotlinreactiveforms.form.MutableFormControl
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
 
 @Composable
-fun SingleLineTextField(
+fun TextFieldWithSupportingRow(
     control: MutableFormControl<String, ValidationError>,
     modifier: Modifier = Modifier,
+    errorMessageProvider: ((ValidationError) -> String)? = null,
     onFocusChange: (FocusState) -> Unit = {},
-    isReadonly: Boolean = false,
+    readonly: Boolean = false,
+    reserveSupportingContentSpace: Boolean = false,
     maxLength: Int? = null,
     label: (@Composable () -> Unit)? = null,
     placeholder: (@Composable () -> Unit)? = null,
@@ -40,9 +42,9 @@ fun SingleLineTextField(
     shape: Shape = RoundedCornerShape(14.dp),
     colors: TextFieldColors = TextFieldDefaults.colors(),
 ) {
-    val state by control.collectAsComponentState()
+    val state by control.collectAsComponentState(errorMessageProvider)
 
-    BasicTextField(
+    TextFieldWithSupportingRow(
         value = state.value,
         onValueChange = { newValue ->
             control.setValue(newValue)
@@ -50,11 +52,11 @@ fun SingleLineTextField(
         },
         modifier = modifier,
         enabled = state.enabled,
-        readonly = isReadonly,
-        mayHaveAnError = control.hasValidators,
+        readonly = readonly,
+        reserveSupportingContentSpace = reserveSupportingContentSpace,
         errorState = state.errorState,
         onFocusChange = onFocusChange,
-        onTouchedChange = { control.markAsTouched() },
+        onTouchChange = { control.markAsTouched() },
         maxLength = maxLength,
         singleLine = true,
         label = label,
@@ -71,11 +73,13 @@ fun SingleLineTextField(
 }
 
 @Composable
-fun OutlinedSingleLineTextField(
+fun OutlinedTextFieldWithSupportingRow(
     control: MutableFormControl<String, ValidationError>,
     modifier: Modifier = Modifier,
+    errorMessageProvider: ((ValidationError) -> String)? = null,
     onFocusChange: (FocusState) -> Unit = {},
-    isReadonly: Boolean = false,
+    readonly: Boolean = false,
+    reserveSupportingContentSpace: Boolean = false,
     maxLength: Int? = null,
     label: (@Composable () -> Unit)? = null,
     placeholder: (@Composable () -> Unit)? = null,
@@ -88,9 +92,9 @@ fun OutlinedSingleLineTextField(
     shape: Shape = RoundedCornerShape(14.dp),
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
 ) {
-    val state by control.collectAsComponentState()
+    val state by control.collectAsComponentState(errorMessageProvider)
 
-    BasicOutlinedTextField(
+    OutlinedTextFieldWithSupportingRow(
         value = state.value,
         onValueChange = { newValue ->
             control.setValue(newValue)
@@ -98,11 +102,11 @@ fun OutlinedSingleLineTextField(
         },
         modifier = modifier,
         enabled = state.enabled,
-        readonly = isReadonly,
-        mayHaveAnError = control.hasValidators,
+        readonly = readonly,
+        reserveSupportingContentSpace = reserveSupportingContentSpace,
         errorState = state.errorState,
         onFocusChange = onFocusChange,
-        onTouchedChange = { control.markAsTouched() },
+        onTouchChange = { control.markAsTouched() },
         maxLength = maxLength,
         singleLine = true,
         label = label,
@@ -113,104 +117,6 @@ fun OutlinedSingleLineTextField(
         keyboardOptions = keyboardOptions,
         showTextLengthCounter = showTextLengthCounter,
         showTextLengthCounterIfZero = showTextLengthCounterIfZero,
-        shape = shape,
-        colors = colors,
-    )
-}
-
-@Composable
-fun MultiLineTextField(
-    control: MutableFormControl<String, ValidationError>,
-    modifier: Modifier = Modifier,
-    isReadonly: Boolean = false,
-    onFocusChange: (FocusState) -> Unit = {},
-    maxLength: Int? = null,
-    maxLines: Int = Int.MAX_VALUE,
-    minLines: Int = 1,
-    label: (@Composable () -> Unit)? = null,
-    placeholder: (@Composable () -> Unit)? = null,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
-    showTextLengthCounter: Boolean = false,
-    showTextLengthCounterIfZero: Boolean = false,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    shape: Shape = RoundedCornerShape(14.dp),
-    colors: TextFieldColors = TextFieldDefaults.colors(),
-) {
-    val state by control.collectAsComponentState()
-
-    BasicTextField(
-        value = state.value,
-        onValueChange = { newValue ->
-            control.setValue(newValue)
-            control.markAsDirty()
-        },
-        modifier = modifier,
-        enabled = state.enabled,
-        readonly = isReadonly,
-        mayHaveAnError = control.hasValidators,
-        errorState = state.errorState,
-        onFocusChange = onFocusChange,
-        onTouchedChange = { control.markAsTouched() },
-        maxLength = maxLength,
-        maxLines = maxLines,
-        minLines = minLines,
-        label = label,
-        placeholder = placeholder,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        showTextLengthCounter = showTextLengthCounter,
-        showTextLengthCounterIfZero = showTextLengthCounterIfZero,
-        keyboardOptions = keyboardOptions,
-        shape = shape,
-        colors = colors,
-    )
-}
-
-@Composable
-fun OutlinedMultiLineTextField(
-    control: MutableFormControl<String, ValidationError>,
-    modifier: Modifier = Modifier,
-    onFocusChange: (FocusState) -> Unit = {},
-    isReadonly: Boolean = false,
-    maxLength: Int? = null,
-    maxLines: Int = Int.MAX_VALUE,
-    minLines: Int = 1,
-    label: (@Composable () -> Unit)? = null,
-    placeholder: (@Composable () -> Unit)? = null,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
-    showTextLengthCounter: Boolean = false,
-    showTextLengthCounterIfZero: Boolean = false,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    shape: Shape = RoundedCornerShape(14.dp),
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-) {
-    val state by control.collectAsComponentState()
-
-    BasicOutlinedTextField(
-        value = state.value,
-        onValueChange = { newValue ->
-            control.setValue(newValue)
-            control.markAsDirty()
-        },
-        modifier = modifier,
-        enabled = state.enabled,
-        readonly = isReadonly,
-        mayHaveAnError = control.hasValidators,
-        errorState = state.errorState,
-        onFocusChange = onFocusChange,
-        onTouchedChange = { control.markAsTouched() },
-        maxLength = maxLength,
-        maxLines = maxLines,
-        minLines = minLines,
-        label = label,
-        placeholder = placeholder,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        showTextLengthCounter = showTextLengthCounter,
-        showTextLengthCounterIfZero = showTextLengthCounterIfZero,
-        keyboardOptions = keyboardOptions,
         shape = shape,
         colors = colors,
     )
@@ -223,6 +129,7 @@ fun <TValue> AutocompleteTextField(
     sourceState: SourceState<TValue>,
     clearValue: TValue,
     modifier: Modifier = Modifier,
+    errorMessageProvider: ((ValidationError) -> String)? = null,
     itemToString: (TValue) -> String,
     keySelector: ((TValue) -> Any)? = null,
     onTextChange: (String) -> Unit,
@@ -240,7 +147,7 @@ fun <TValue> AutocompleteTextField(
     shape: Shape = RoundedCornerShape(12.dp),
     colors: DropDownTextFieldColors = DropDownTextFieldDefaults.colors(),
 ) {
-    val state by control.collectAsComponentState()
+    val state by control.collectAsComponentState(errorMessageProvider)
 
     AutocompleteTextField(
         sourceState = sourceState,
@@ -282,6 +189,7 @@ fun <TValue> OutlinedAutocompleteTextField(
     sourceState: SourceState<TValue>,
     clearValue: TValue,
     modifier: Modifier = Modifier,
+    errorMessageProvider: ((ValidationError) -> String)? = null,
     itemToString: (TValue) -> String,
     keySelector: ((TValue) -> Any)? = null,
     onTextChange: (String) -> Unit,
@@ -299,7 +207,7 @@ fun <TValue> OutlinedAutocompleteTextField(
     shape: Shape = RoundedCornerShape(12.dp),
     colors: DropDownTextFieldColors = OutlinedDropDownTextFieldDefaults.colors(),
 ) {
-    val state by control.collectAsComponentState()
+    val state by control.collectAsComponentState(errorMessageProvider)
 
     OutlinedAutocompleteTextField(
         sourceState = sourceState,

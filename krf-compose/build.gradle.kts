@@ -12,7 +12,7 @@ plugins {
 kotlin {
     jvm()
 
-    androidLibrary {
+    android {
         namespace = "com.github.RavenZIP.bereza.ui.reactive"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -20,12 +20,16 @@ kotlin {
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
     }
 
-    js(IR) { browser() }
+    js {
+        browser()
+        binaries.executable()
+    }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         outputModuleName.set("bereza-ui-reactive")
         browser { commonWebpackConfig { outputFileName = "bereza-ui-reactive.js" } }
+        binaries.executable()
     }
 
     sourceSets {
