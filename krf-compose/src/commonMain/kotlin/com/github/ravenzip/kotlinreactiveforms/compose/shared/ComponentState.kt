@@ -12,7 +12,6 @@ import com.github.ravenzip.berezaUI.core.data.ComponentErrorState
 import com.github.ravenzip.kotlinreactiveforms.data.FormControlState
 import com.github.ravenzip.kotlinreactiveforms.data.FormControlStatus
 import com.github.ravenzip.kotlinreactiveforms.data.enabled
-import com.github.ravenzip.kotlinreactiveforms.data.extractErrors
 import com.github.ravenzip.kotlinreactiveforms.form.FormControl
 import com.github.ravenzip.kotlinreactiveforms.validation.ValidationError
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -27,7 +26,7 @@ data class ComponentState<T>(
 
 fun <T> computeComponentState(state: FormControlState<T, ValidationError>): ComponentState<T> {
     val errorState =
-        when (state.status) {
+        when (val status = state.status) {
             FormControlStatus.Disabled,
             FormControlStatus.Valid -> {
                 ComponentErrorState.Ok
@@ -35,7 +34,9 @@ fun <T> computeComponentState(state: FormControlState<T, ValidationError>): Comp
 
             is FormControlStatus.Invalid -> {
                 if (state.dirty || state.touched) {
-                    val errorMessage = state.status.extractErrors().first().message
+                    // Не упадем, потому что в случае статуса Invalid текст ошибки должен быть
+                    // всегда
+                    val errorMessage = status.errors.first().message
                     ComponentErrorState.Error(errorMessage)
                 } else {
                     ComponentErrorState.Ok
@@ -76,7 +77,6 @@ fun <TValue> FormControl<TValue, ValidationError>.collectAsComponentState(
         lifecycle.repeatOnLifecycle(minActiveState) {
             stateChanges
                 .map { state -> computeComponentState(state) }
-                // TODO сделать ли distinct по каждому ключу?
                 .distinctUntilChanged()
                 .collect { x -> value = x }
         }
