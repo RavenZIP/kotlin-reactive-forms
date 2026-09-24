@@ -87,7 +87,7 @@ internal class MutableFormControlImpl<TValue, out TError : ValidationError>(
         state.copy(
             value = value,
             valueChangeType = ValueChangeType.Reset,
-            status = computeStatus(value, disabled),
+            status = computeStatus(value, state.status.disabled),
             touched = false,
             dirty = false,
         )
