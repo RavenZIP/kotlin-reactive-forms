@@ -3,11 +3,11 @@ package com.github.ravenzip.kotlinreactiveforms
 import com.github.ravenzip.kotlinreactiveforms.data.*
 import com.github.ravenzip.kotlinreactiveforms.form.mutableFormControl
 import com.github.ravenzip.kotlinreactiveforms.validation.RangeValidator
-import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.runTest
 
 // TODO разобраться с тестами. Возможно, стоит их пересмотреть, но только после окончательной правки
 // архитектуры
