@@ -20,11 +20,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.github.ravenzip.reactiveforms"
+    namespace = "com.github.ravenzip.kotlin.reactiveforms.demo.android"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.github.ravenzip.reactive-forms.demo"
+        applicationId = "com.github.ravenzip.kotlin.reactiveforms.demo"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

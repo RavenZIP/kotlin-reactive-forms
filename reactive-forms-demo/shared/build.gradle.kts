@@ -14,7 +14,7 @@ kotlin {
     jvm()
 
     android {
-        namespace = "com.github.ravenzip.reactiveforms"
+        namespace = "com.github.ravenzip.kotlin.reactiveforms.demo.shared"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -25,9 +25,16 @@ kotlin {
         withHostTest { isIncludeAndroidResources = true }
     }
 
-    js { browser() }
+    js {
+        browser()
+        binaries.executable()
+    }
 
-    @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     dependencies {
@@ -44,8 +51,8 @@ kotlin {
         implementation(libs.androidx.navigation3.ui)
         implementation(libs.kotlinx.serialization.json)
 
-        implementation(projects.krfCore)
-        implementation(projects.krfCompose)
+        implementation(projects.reactiveformsCore)
+        implementation(projects.reactiveformsCompose)
         implementation(libs.ravenzip.bereza.ui.core)
 
         testImplementation(libs.kotlin.test)

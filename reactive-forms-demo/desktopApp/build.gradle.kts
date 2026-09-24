@@ -17,11 +17,11 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "com.github.ravenzip.reactiveforms.MainKt"
+        mainClass = "com.github.ravenzip.kotlin.reactiveforms.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "reactive-forms-demo"
+            packageName = "kotlin-reactiveforms-demo"
             packageVersion = "1.0.0"
         }
     }
