@@ -5,5 +5,5 @@ interface ValidationError {
     val message: String
 }
 
-data class DefaultValidationError(override val kind: String, override val message: String) :
+internal class ValidationErrorImpl(override val kind: String, override val message: String) :
     ValidationError
