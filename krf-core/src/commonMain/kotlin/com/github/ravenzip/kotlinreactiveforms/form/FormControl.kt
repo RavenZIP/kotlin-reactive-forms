@@ -43,9 +43,6 @@ interface MutableFormControl<TValue, out TError : ValidationError> : FormControl
     fun markAsPristine()
 }
 
-// TODO Возможно, что disabled все-таки должно быть отдельным полем
-// Текущая реализация может сыграть злую шутку, если появится статус Pending и асинхронные
-// валидаторы
 internal class MutableFormControlImpl<TValue, out TError : ValidationError>(
     private val initialValue: TValue,
     private val disabled: Boolean = false,
