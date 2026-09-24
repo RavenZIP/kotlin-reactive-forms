@@ -1,6 +1,5 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-/** ShortName => krf */
 rootProject.name = "KotlinReactiveForms"
 
 pluginManagement {
@@ -21,4 +20,4 @@ dependencyResolutionManagement {
 
 plugins { id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0" }
 
-include("krf-core", "krf-compose", "krf-utils")
+include("reactiveforms-core", "reactiveforms-compose", "reactiveforms-utils")
