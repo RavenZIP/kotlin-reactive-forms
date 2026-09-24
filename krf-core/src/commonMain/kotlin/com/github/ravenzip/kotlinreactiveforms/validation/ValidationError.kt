@@ -1,9 +1,19 @@
 package com.github.ravenzip.kotlinreactiveforms.validation
 
-interface ValidationError {
-    val kind: String
-    val message: String
-}
+sealed interface ValidationError
 
-data class DefaultValidationError(override val kind: String, override val message: String) :
-    ValidationError
+data object RequiredValidationError : ValidationError
+
+data class MinValidationError<T>(val min: T, val actual: T) : ValidationError
+
+data class MaxValidationError<T>(val max: T, val actual: T) : ValidationError
+
+data class RangeValidationError<T>(val min: T, val max: T, val actual: T) : ValidationError
+
+data class MinLengthValidationError(val min: Int, val actual: Int) : ValidationError
+
+data class MaxLengthValidationError(val max: Int, val actual: Int) : ValidationError
+
+data object EmailValidationError : ValidationError
+
+data object PhoneValidationError : ValidationError

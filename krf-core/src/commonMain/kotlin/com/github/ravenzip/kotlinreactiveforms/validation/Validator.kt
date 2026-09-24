@@ -3,94 +3,57 @@ package com.github.ravenzip.kotlinreactiveforms.validation
 import com.github.ravenzip.kotlinreactiveforms.utils.emailRegex
 import com.github.ravenzip.kotlinreactiveforms.utils.phoneRegex
 
-fun interface ValidatorFn<TValue, TError : ValidationError> {
+fun interface ValidatorFn<TValue, out TError : ValidationError> {
     operator fun invoke(value: TValue): TError?
 }
 
-/** Возможные валидаторы для компонентов */
-// TODO надо ли разделить на разные классы согласно типу T?
-// TODO добавить перевод на другие языки в сообщении валидаторов
-class Validator {
-    companion object {
-        val required: ValidatorFn<String, DefaultValidationError> = { value: String ->
-            if (value.isEmpty())
-                DefaultValidationError(
-                    kind = ValidatorName.REQUIRED.name,
-                    message = "Поле обязательно для заполнения",
-                )
-            else null
-        }
+object RequiredValidator {
+    fun string(): ValidatorFn<String, RequiredValidationError> = { value ->
+        if (value.isEmpty()) RequiredValidationError else null
+    }
 
-        fun minLength(min: Int): ValidatorFn<String, DefaultValidationError> = { value: String ->
-            if (value.length < min)
-                DefaultValidationError(
-                    kind = ValidatorName.MIN_LENGTH.name,
-                    message = "Минимальная длина $min символа",
-                )
-            else null
-        }
+    fun <T> collection(): ValidatorFn<Collection<T>, RequiredValidationError> = { value ->
+        if (value.isEmpty()) RequiredValidationError else null
+    }
 
-        fun maxLength(max: Int): ValidatorFn<String, DefaultValidationError> = { value: String ->
-            if (value.length > max)
-                DefaultValidationError(
-                    kind = ValidatorName.MAX_LENGTH.name,
-                    message = "Максимальная длина $max символа",
-                )
-            else null
-        }
+    fun <T> value(): ValidatorFn<T?, RequiredValidationError> = { value ->
+        if (value == null) RequiredValidationError else null
+    }
+}
 
-        fun min(min: Int): ValidatorFn<Int, DefaultValidationError> = { value: Int ->
-            if (value < min)
-                DefaultValidationError(
-                    kind = ValidatorName.MIN.name,
-                    message = "Минимальное допустимое значение $min",
-                )
-            else null
-        }
+object LengthValidator {
+    fun min(min: Int): ValidatorFn<String, MinLengthValidationError> = { value ->
+        if (value.length < min) MinLengthValidationError(min, value.length) else null
+    }
 
-        fun min(min: Double): ValidatorFn<Double, DefaultValidationError> = { value: Double ->
-            if (value < min)
-                DefaultValidationError(
-                    kind = ValidatorName.MIN.name,
-                    message = "Минимальное допустимое значение $min",
-                )
-            else null
-        }
+    fun max(max: Int): ValidatorFn<String, MaxLengthValidationError> = { value: String ->
+        if (value.length > max) MaxLengthValidationError(max, value.length) else null
+    }
+}
 
-        fun max(max: Int): ValidatorFn<Int, DefaultValidationError> = { value: Int ->
-            if (value > max)
-                DefaultValidationError(
-                    kind = ValidatorName.MAX.name,
-                    message = "Максимальное допустимое значение $max",
-                )
-            else null
-        }
+object RangeValidator {
+    fun <T : Comparable<T>> min(min: T): ValidatorFn<T, MinValidationError<T>> = { value ->
+        if (value < min) MinValidationError(min, value) else null
+    }
 
-        fun max(max: Double): ValidatorFn<Double, DefaultValidationError> = { value: Double ->
-            if (value > max)
-                DefaultValidationError(
-                    kind = ValidatorName.MAX.name,
-                    message = "Максимальное допустимое значение $max",
-                )
-            else null
-        }
+    fun <T : Comparable<T>> max(max: T): ValidatorFn<T, MaxValidationError<T>> = { value ->
+        if (value > max) MaxValidationError(max, value) else null
+    }
 
-        val email: ValidatorFn<String, DefaultValidationError> = { value: String ->
-            if (!emailRegex.matches(value))
-                DefaultValidationError(
-                    kind = ValidatorName.EMAIL.name,
-                    message = "Введен некорректный email",
-                )
-            else null
+    fun <T : Comparable<T>> range(min: T, max: T): ValidatorFn<T, RangeValidationError<T>> =
+        { value ->
+            if (value !in min..max) RangeValidationError(min, max, value) else null
         }
+}
 
-        val phone: ValidatorFn<String, DefaultValidationError> = { value: String ->
-            if (!phoneRegex.matches(value))
-                DefaultValidationError(
-                    kind = ValidatorName.PHONE.name,
-                    message = "Введен некорректный номер телефона",
-                )
-            else null
-        }
+object EmailValidator {
+    val validator: ValidatorFn<String, EmailValidationError> = { value ->
+        if (!emailRegex.matches(value)) EmailValidationError else null
+    }
+}
+
+object PhoneValidator {
+    val validator: ValidatorFn<String, PhoneValidationError> = { value: String ->
+        if (!phoneRegex.matches(value)) PhoneValidationError else null
     }
 }

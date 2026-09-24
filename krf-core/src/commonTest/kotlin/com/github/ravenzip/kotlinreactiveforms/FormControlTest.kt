@@ -2,7 +2,7 @@ package com.github.ravenzip.kotlinreactiveforms
 
 import com.github.ravenzip.kotlinreactiveforms.data.*
 import com.github.ravenzip.kotlinreactiveforms.form.mutableFormControl
-import com.github.ravenzip.kotlinreactiveforms.validation.Validator
+import com.github.ravenzip.kotlinreactiveforms.validation.RangeValidator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -49,14 +49,16 @@ class FormControlTest {
 
     @Test
     fun `initial status is invalid with validators and wrong value`() = runTest {
-        val control = mutableFormControl(initialValue = 0, validators = listOf(Validator.min(1)))
+        val control =
+            mutableFormControl(initialValue = 0, validators = listOf(RangeValidator.min(1)))
 
         assertTrue(control.status.invalid)
     }
 
     @Test
     fun `initial status is valid with validators and correct value`() = runTest {
-        val control = mutableFormControl(initialValue = 2, validators = listOf(Validator.min(1)))
+        val control =
+            mutableFormControl(initialValue = 2, validators = listOf(RangeValidator.min(1)))
 
         assertTrue(control.status.valid)
     }
@@ -70,14 +72,16 @@ class FormControlTest {
 
     @Test
     fun `initial errors is not empty with validators and wrong value`() = runTest {
-        val control = mutableFormControl(initialValue = 0, validators = listOf(Validator.min(1)))
+        val control =
+            mutableFormControl(initialValue = 0, validators = listOf(RangeValidator.min(1)))
 
         assertTrue(control.status.extractErrors().isNotEmpty())
     }
 
     @Test
     fun `initial errors is empty with validators and correct value`() = runTest {
-        val control = mutableFormControl(initialValue = 2, validators = listOf(Validator.min(1)))
+        val control =
+            mutableFormControl(initialValue = 2, validators = listOf(RangeValidator.min(1)))
 
         assertTrue(control.status.extractErrors().isEmpty())
     }
@@ -127,7 +131,7 @@ class FormControlTest {
             mutableFormControl(
                 initialValue = 0,
                 disabled = true,
-                validators = listOf(Validator.min(1)),
+                validators = listOf(RangeValidator.min(1)),
             )
         control.enable()
 
@@ -153,7 +157,8 @@ class FormControlTest {
 
     @Test
     fun `control have errors after call setValue with invalid value`() = runTest {
-        val control = mutableFormControl(initialValue = 10, validators = listOf(Validator.min(1)))
+        val control =
+            mutableFormControl(initialValue = 10, validators = listOf(RangeValidator.min(1)))
         control.setValue(0)
 
         assertTrue(control.status.extractErrors().isNotEmpty())
@@ -161,7 +166,8 @@ class FormControlTest {
 
     @Test
     fun `control status changed to invalid after call setValue with invalid value`() = runTest {
-        val control = mutableFormControl(initialValue = 10, validators = listOf(Validator.min(1)))
+        val control =
+            mutableFormControl(initialValue = 10, validators = listOf(RangeValidator.min(1)))
         control.setValue(0)
 
         assertTrue(control.status.invalid)
