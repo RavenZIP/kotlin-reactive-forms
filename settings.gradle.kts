@@ -1,6 +1,5 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-/** ShortName => krf */
 rootProject.name = "KotlinReactiveForms"
 
 pluginManagement {
