@@ -15,7 +15,6 @@ fun RadioButtonScreen(navigationViewModel: RootNavigationViewModel) {
     ComponentScreen(
         title = "RadioButton",
         description = "TODO",
-        hasIntegrationWithReactiveForms = false,
         goBack = { navigationViewModel.navigateBack() },
         content = {
             RadioButton(control = control) {
