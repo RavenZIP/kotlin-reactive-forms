@@ -12,8 +12,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.github.ravenzip.berezaUI.core.components.switch.Switch
-import com.github.ravenzip.berezaUI.core.components.switch.SwitchGroup
+import com.github.ravenzip.bereza.core.components.switch.Switch
+import com.github.ravenzip.bereza.core.components.switch.SwitchGroup
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.collectAsComponentState
 import com.github.ravenzip.kotlin.reactiveforms.form.MutableFormControl
 import com.github.ravenzip.kotlin.reactiveforms.validation.ValidationError

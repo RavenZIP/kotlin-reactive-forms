@@ -8,7 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import com.github.ravenzip.berezaUI.core.data.ComponentErrorState
+import com.github.ravenzip.bereza.core.data.ComponentErrorState
 import com.github.ravenzip.kotlin.reactiveforms.data.FormControlState
 import com.github.ravenzip.kotlin.reactiveforms.data.FormControlStatus
 import com.github.ravenzip.kotlin.reactiveforms.data.enabled
