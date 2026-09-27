@@ -13,6 +13,7 @@ import com.github.ravenzip.bereza.core.components.textfield.select.MultiSelect
 import com.github.ravenzip.bereza.core.components.textfield.select.OutlinedMultiSelect
 import com.github.ravenzip.bereza.core.data.DropDownTextFieldColors
 import com.github.ravenzip.bereza.core.data.DropDownTextFieldDefaults
+import com.github.ravenzip.bereza.core.data.SelectionChange
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.FocusLostEffect
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.collectAsComponentState
 import com.github.ravenzip.kotlin.reactiveforms.form.MutableFormControl
@@ -29,6 +30,8 @@ fun <T> MultiSelect(
     chipOverflow: ChipOverflow = ChipOverflow.Wrap,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
+    itemContent: @Composable (() -> Unit),
+    emptyContent: @Composable (() -> Unit),
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(12.dp),
     colors: DropDownTextFieldColors = DropDownTextFieldDefaults.colors(),
@@ -46,11 +49,17 @@ fun <T> MultiSelect(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onRemoveChip = { item ->
-            // TODO
-        },
-        onSelect = { item ->
-            // TODO
+        onSelectionChange = { item, selectionChange ->
+            when (selectionChange) {
+                SelectionChange.Deselect -> {
+                    val itemKey = key(item)
+                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
+                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
+                    control.setValue(newSelected)
+                }
+                else -> control.setValue(state.value + item)
+            }
+            control.markAsDirty()
         },
         errorState = state.errorState,
         key = key,
@@ -58,6 +67,8 @@ fun <T> MultiSelect(
         chipOverflow = chipOverflow,
         label = label,
         placeholder = placeholder,
+        itemContent = {},
+        emptyContent = emptyContent,
         interactionSource = interactionSource,
         shape = shape,
         colors = colors,
@@ -75,6 +86,8 @@ fun <T> OutlinedMultiSelect(
     chipOverflow: ChipOverflow = ChipOverflow.Wrap,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
+    itemContent: @Composable (() -> Unit),
+    emptyContent: @Composable (() -> Unit),
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(12.dp),
     colors: DropDownTextFieldColors = DropDownTextFieldDefaults.outlinedColors(),
@@ -92,11 +105,17 @@ fun <T> OutlinedMultiSelect(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onRemoveChip = { item ->
-            // TODO
-        },
-        onSelect = { item ->
-            // TODO
+        onSelectionChange = { item, selectionChange ->
+            when (selectionChange) {
+                SelectionChange.Deselect -> {
+                    val itemKey = key(item)
+                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
+                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
+                    control.setValue(newSelected)
+                }
+                else -> control.setValue(state.value + item)
+            }
+            control.markAsDirty()
         },
         errorState = state.errorState,
         key = key,
@@ -105,6 +124,8 @@ fun <T> OutlinedMultiSelect(
         label = label,
         placeholder = placeholder,
         interactionSource = interactionSource,
+        itemContent = {},
+        emptyContent = emptyContent,
         shape = shape,
         colors = colors,
     )

@@ -16,7 +16,7 @@ junit = "4.13.2"
 
 vanniktechMavenPublish = "0.37.0"
 
-ravenzip-bereza-ui = "0.6.0"
+ravenzip-bereza-ui = "0.6.1"
 ravenzip-krex = "0.1.2"
 
 [libraries]

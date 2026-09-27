@@ -13,6 +13,7 @@ import com.github.ravenzip.bereza.core.components.textfield.autocomplete.MultiAu
 import com.github.ravenzip.bereza.core.components.textfield.autocomplete.OutlinedMultiAutocomplete
 import com.github.ravenzip.bereza.core.data.DropDownTextFieldColors
 import com.github.ravenzip.bereza.core.data.DropDownTextFieldDefaults
+import com.github.ravenzip.bereza.core.data.SelectionChange
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.FocusLostEffect
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.collectAsComponentState
 import com.github.ravenzip.kotlin.reactiveforms.form.MutableFormControl
@@ -48,13 +49,16 @@ fun <T> MultiAutocomplete(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onRemoveChip = { item ->
-            // TODO подумать как искать элементы и добавлять\кикать
-            control.setValue(listOf())
-            control.markAsDirty()
-        },
-        onSelect = { item ->
-            control.setValue(listOf())
+        onSelectionChange = { item, selectionChange ->
+            when (selectionChange) {
+                SelectionChange.Deselect -> {
+                    val itemKey = key(item)
+                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
+                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
+                    control.setValue(newSelected)
+                }
+                else -> control.setValue(state.value + item)
+            }
             control.markAsDirty()
         },
         search = search,
@@ -101,13 +105,16 @@ fun <T> OutlinedMultiAutocomplete(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onRemoveChip = { item ->
-            // TODO подумать как искать элементы и добавлять\кикать
-            control.setValue(listOf())
-            control.markAsDirty()
-        },
-        onSelect = { item ->
-            control.setValue(listOf())
+        onSelectionChange = { item, selectionChange ->
+            when (selectionChange) {
+                SelectionChange.Deselect -> {
+                    val itemKey = key(item)
+                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
+                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
+                    control.setValue(newSelected)
+                }
+                else -> control.setValue(state.value + item)
+            }
             control.markAsDirty()
         },
         search = search,
@@ -156,13 +163,16 @@ fun <T> MultiAutocomplete(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onRemoveChip = { item ->
-            // TODO подумать как искать элементы и добавлять\кикать
-            control.setValue(listOf())
-            control.markAsDirty()
-        },
-        onSelect = { item ->
-            control.setValue(listOf())
+        onSelectionChange = { item, selectionChange ->
+            when (selectionChange) {
+                SelectionChange.Deselect -> {
+                    val itemKey = key(item)
+                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
+                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
+                    control.setValue(newSelected)
+                }
+                else -> control.setValue(state.value + item)
+            }
             control.markAsDirty()
         },
         search = search,
@@ -211,13 +221,16 @@ fun <T> OutlinedMultiAutocomplete(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onRemoveChip = { item ->
-            // TODO подумать как искать элементы и добавлять\кикать
-            control.setValue(listOf())
-            control.markAsDirty()
-        },
-        onSelect = { item ->
-            control.setValue(listOf())
+        onSelectionChange = { item, selectionChange ->
+            when (selectionChange) {
+                SelectionChange.Deselect -> {
+                    val itemKey = key(item)
+                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
+                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
+                    control.setValue(newSelected)
+                }
+                else -> control.setValue(state.value + item)
+            }
             control.markAsDirty()
         },
         search = search,
