@@ -78,10 +78,10 @@ dependencyResolutionManagement {
 
 ```
 dependencies {
-      implementation("com.github.RavenZIP.kotlin-reactive-forms:krf-core:$version") 
+      implementation("com.github.RavenZIP.kotlin-reactive-forms:reactiveforms-core:$version") 
 
       // При необходимости можно подключить utils-модуль
-      implementation("com.github.RavenZIP.kotlin-reactive-forms:krf-utils:$version")
+      implementation("com.github.RavenZIP.kotlin-reactive-forms:reactiveforms-utils:$version")
 }
 ```
 
@@ -94,10 +94,10 @@ dependencies {
 ravenzip-kotlin-reactive-forms = "$version"
 
 [libraries]
-ravenzip-kotlin-reactive-forms-core = { module = "com.github.RavenZIP.kotlin-reactive-forms:krf-core", version.ref = "ravenzip-kotlin-reactive-forms" }
+ravenzip-kotlin-reactive-forms-core = { module = "com.github.RavenZIP.kotlin-reactive-forms:reactiveforms-core", version.ref = "ravenzip-kotlin-reactive-forms" }
 
 // При необходимости можно подключить utils-модуль
-ravenzip-kotlin-reactive-forms-utils = { module = "com.github.RavenZIP.kotlin-reactive-forms:krf-utils", version.ref = "ravenzip-kotlin-reactive-forms" }
+ravenzip-kotlin-reactive-forms-utils = { module = "com.github.RavenZIP.kotlin-reactive-forms:reactiveforms-utils", version.ref = "ravenzip-kotlin-reactive-forms" }
 ```
 
 **build.gradle.kts**
