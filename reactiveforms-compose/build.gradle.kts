@@ -43,6 +43,7 @@ kotlin {
 
             implementation(projects.reactiveformsCore)
             implementation(libs.ravenzip.bereza.ui.core)
+            implementation(libs.ravenzip.krex.core)
         }
 
         commonTest.dependencies { implementation(libs.kotlin.test) }

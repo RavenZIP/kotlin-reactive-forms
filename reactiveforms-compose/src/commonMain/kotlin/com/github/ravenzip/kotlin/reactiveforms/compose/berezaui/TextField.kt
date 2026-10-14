@@ -1,23 +1,21 @@
 package com.github.ravenzip.kotlin.reactiveforms.compose.berezaui
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.github.ravenzip.berezaUI.core.components.textfield.OutlinedTextFieldWithSupportingRow
-import com.github.ravenzip.berezaUI.core.components.textfield.TextFieldWithSupportingRow
-import com.github.ravenzip.berezaUI.core.components.textfield.dropdown.AutocompleteTextField
-import com.github.ravenzip.berezaUI.core.components.textfield.dropdown.OutlinedAutocompleteTextField
-import com.github.ravenzip.berezaUI.core.data.*
+import com.github.ravenzip.bereza.core.components.textfield.OutlinedTextFieldWithSupportingRow
+import com.github.ravenzip.bereza.core.components.textfield.TextFieldWithSupportingRow
+import com.github.ravenzip.kotlin.reactiveforms.compose.shared.FocusLostEffect
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.collectAsComponentState
 import com.github.ravenzip.kotlin.reactiveforms.form.MutableFormControl
 import com.github.ravenzip.kotlin.reactiveforms.validation.ValidationError
@@ -27,7 +25,6 @@ fun TextFieldWithSupportingRow(
     control: MutableFormControl<String, ValidationError>,
     modifier: Modifier = Modifier,
     errorMessageProvider: ((ValidationError) -> String)? = null,
-    onFocusChange: (FocusState) -> Unit = {},
     readonly: Boolean = false,
     reserveSupportingContentSpace: Boolean = false,
     maxLength: Int? = null,
@@ -39,10 +36,17 @@ fun TextFieldWithSupportingRow(
     showTextLengthCounterIfZero: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(14.dp),
     colors: TextFieldColors = TextFieldDefaults.colors(),
 ) {
+    val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
     val state by control.collectAsComponentState(errorMessageProvider)
+
+    FocusLostEffect(
+        interactionSource = interactionSource,
+        onFocusLost = { control.markAsTouched() },
+    )
 
     TextFieldWithSupportingRow(
         value = state.value,
@@ -55,8 +59,6 @@ fun TextFieldWithSupportingRow(
         readonly = readonly,
         reserveSupportingContentSpace = reserveSupportingContentSpace,
         errorState = state.errorState,
-        onFocusChange = onFocusChange,
-        onTouchChange = { control.markAsTouched() },
         maxLength = maxLength,
         singleLine = true,
         label = label,
@@ -67,6 +69,7 @@ fun TextFieldWithSupportingRow(
         keyboardOptions = keyboardOptions,
         showTextLengthCounter = showTextLengthCounter,
         showTextLengthCounterIfZero = showTextLengthCounterIfZero,
+        interactionSource = interactionSource,
         shape = shape,
         colors = colors,
     )
@@ -77,7 +80,6 @@ fun OutlinedTextFieldWithSupportingRow(
     control: MutableFormControl<String, ValidationError>,
     modifier: Modifier = Modifier,
     errorMessageProvider: ((ValidationError) -> String)? = null,
-    onFocusChange: (FocusState) -> Unit = {},
     readonly: Boolean = false,
     reserveSupportingContentSpace: Boolean = false,
     maxLength: Int? = null,
@@ -89,10 +91,17 @@ fun OutlinedTextFieldWithSupportingRow(
     showTextLengthCounterIfZero: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(14.dp),
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
 ) {
+    val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
     val state by control.collectAsComponentState(errorMessageProvider)
+
+    FocusLostEffect(
+        interactionSource = interactionSource,
+        onFocusLost = { control.markAsTouched() },
+    )
 
     OutlinedTextFieldWithSupportingRow(
         value = state.value,
@@ -105,8 +114,6 @@ fun OutlinedTextFieldWithSupportingRow(
         readonly = readonly,
         reserveSupportingContentSpace = reserveSupportingContentSpace,
         errorState = state.errorState,
-        onFocusChange = onFocusChange,
-        onTouchChange = { control.markAsTouched() },
         maxLength = maxLength,
         singleLine = true,
         label = label,
@@ -117,126 +124,7 @@ fun OutlinedTextFieldWithSupportingRow(
         keyboardOptions = keyboardOptions,
         showTextLengthCounter = showTextLengthCounter,
         showTextLengthCounterIfZero = showTextLengthCounterIfZero,
-        shape = shape,
-        colors = colors,
-    )
-}
-
-@Composable
-@ExperimentalMaterial3Api
-fun <TValue> AutocompleteTextField(
-    control: MutableFormControl<TValue, ValidationError>,
-    sourceState: SourceState<TValue>,
-    clearValue: TValue,
-    modifier: Modifier = Modifier,
-    errorMessageProvider: ((ValidationError) -> String)? = null,
-    itemToString: (TValue) -> String,
-    keySelector: ((TValue) -> Any)? = null,
-    onTextChange: (String) -> Unit,
-    readOnly: Boolean = false,
-    onExpandedChange: (DropDownExpandEvent) -> Unit = {},
-    collapseAfterSelect: Boolean = true,
-    onFocusChange: (FocusState) -> Unit = {},
-    onTouchChange: () -> Unit = {},
-    textFieldLabel: (@Composable () -> Unit)? = null,
-    textFieldLeadingIcon: (@Composable () -> Unit)? = null,
-    textFieldTrailingIcon: (@Composable () -> Unit)? = null,
-    dropDownMenuItemContent: @Composable (TValue) -> Unit,
-    dropDownMenuEmptyContent: @Composable () -> Unit,
-    dropDownMenuLoadingContent: @Composable () -> Unit = dropDownMenuEmptyContent,
-    shape: Shape = RoundedCornerShape(12.dp),
-    colors: DropDownTextFieldColors = DropDownTextFieldDefaults.colors(),
-) {
-    val state by control.collectAsComponentState(errorMessageProvider)
-
-    AutocompleteTextField(
-        sourceState = sourceState,
-        selected = state.value,
-        onSelectItem = { newSelected ->
-            control.setValue(newSelected)
-            control.markAsDirty()
-        },
-        onClearSelected = { control.setValue(clearValue) },
-        itemToString = itemToString,
-        keySelector = keySelector,
-        onTextChange = { newText ->
-            control.markAsDirty()
-            onTextChange(newText)
-        },
-        modifier = modifier,
-        errorState = state.errorState,
-        enabled = state.enabled,
-        readOnly = readOnly,
-        onExpandedChange = onExpandedChange,
-        collapseAfterSelect = collapseAfterSelect,
-        onFocusChange = onFocusChange,
-        onTouchChange = onTouchChange,
-        textFieldLabel = textFieldLabel,
-        textFieldLeadingIcon = textFieldLeadingIcon,
-        textFieldTrailingIcon = textFieldTrailingIcon,
-        dropDownMenuItemContent = dropDownMenuItemContent,
-        dropDownMenuEmptyContent = dropDownMenuEmptyContent,
-        dropDownMenuLoadingContent = dropDownMenuLoadingContent,
-        shape = shape,
-        colors = colors,
-    )
-}
-
-@Composable
-@ExperimentalMaterial3Api
-fun <TValue> OutlinedAutocompleteTextField(
-    control: MutableFormControl<TValue, ValidationError>,
-    sourceState: SourceState<TValue>,
-    clearValue: TValue,
-    modifier: Modifier = Modifier,
-    errorMessageProvider: ((ValidationError) -> String)? = null,
-    itemToString: (TValue) -> String,
-    keySelector: ((TValue) -> Any)? = null,
-    onTextChange: (String) -> Unit,
-    readOnly: Boolean = false,
-    onExpandedChange: (DropDownExpandEvent) -> Unit = {},
-    collapseAfterSelect: Boolean = true,
-    onFocusChange: (FocusState) -> Unit = {},
-    onTouchChange: () -> Unit = {},
-    textFieldLabel: (@Composable () -> Unit)? = null,
-    textFieldLeadingIcon: (@Composable () -> Unit)? = null,
-    textFieldTrailingIcon: (@Composable () -> Unit)? = null,
-    dropDownMenuItemContent: @Composable (TValue) -> Unit,
-    dropDownMenuEmptyContent: @Composable () -> Unit,
-    dropDownMenuLoadingContent: @Composable () -> Unit = dropDownMenuEmptyContent,
-    shape: Shape = RoundedCornerShape(12.dp),
-    colors: DropDownTextFieldColors = OutlinedDropDownTextFieldDefaults.colors(),
-) {
-    val state by control.collectAsComponentState(errorMessageProvider)
-
-    OutlinedAutocompleteTextField(
-        sourceState = sourceState,
-        selected = state.value,
-        onSelectItem = { newSelectedItem ->
-            control.setValue(newSelectedItem)
-            control.markAsDirty()
-        },
-        onClearSelected = { control.setValue(clearValue) },
-        itemToString = itemToString,
-        keySelector = keySelector,
-        onTextChange = { newText ->
-            control.markAsDirty()
-            onTextChange(newText)
-        },
-        modifier = modifier,
-        errorState = state.errorState,
-        enabled = state.enabled,
-        readOnly = readOnly,
-        onExpandedChange = onExpandedChange,
-        collapseAfterSelect = collapseAfterSelect,
-        onFocusChange = onFocusChange,
-        onTouchChange = onTouchChange,
-        textFieldLabel = textFieldLabel,
-        textFieldLeadingIcon = textFieldLeadingIcon,
-        textFieldTrailingIcon = textFieldTrailingIcon,
-        dropDownMenuItemContent = dropDownMenuItemContent,
-        dropDownMenuEmptyContent = dropDownMenuEmptyContent,
-        dropDownMenuLoadingContent = dropDownMenuLoadingContent,
+        interactionSource = interactionSource,
         shape = shape,
         colors = colors,
     )
