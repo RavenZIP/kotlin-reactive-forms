@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.github.ravenzip.bereza.core.components.checkbox.Checkbox
 import com.github.ravenzip.bereza.core.components.checkbox.CheckboxGroup
-import com.github.ravenzip.bereza.core.data.SelectionChange
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.FocusLostEffect
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.collectAsComponentState
 import com.github.ravenzip.kotlin.reactiveforms.form.MutableFormControl
@@ -79,16 +78,8 @@ fun <T> CheckboxGroup(
     CheckboxGroup(
         source = source,
         selectedItems = state.value,
-        onSelectionItemChange = { item, selectionChange ->
-            when (selectionChange) {
-                SelectionChange.Deselect -> {
-                    val itemKey = key(item)
-                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
-                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
-                    control.setValue(newSelected)
-                }
-                else -> control.setValue(state.value + item)
-            }
+        onSelectionItemChange = { change ->
+            control.setValue(change.selected)
             control.markAsDirty()
         },
         key = key,

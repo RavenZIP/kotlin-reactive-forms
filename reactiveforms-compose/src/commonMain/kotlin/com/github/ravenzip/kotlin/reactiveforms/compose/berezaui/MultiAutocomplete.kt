@@ -1,6 +1,7 @@
 package com.github.ravenzip.kotlin.reactiveforms.compose.berezaui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,7 +14,6 @@ import com.github.ravenzip.bereza.core.components.textfield.autocomplete.MultiAu
 import com.github.ravenzip.bereza.core.components.textfield.autocomplete.OutlinedMultiAutocomplete
 import com.github.ravenzip.bereza.core.data.DropDownTextFieldColors
 import com.github.ravenzip.bereza.core.data.DropDownTextFieldDefaults
-import com.github.ravenzip.bereza.core.data.SelectionChange
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.FocusLostEffect
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.collectAsComponentState
 import com.github.ravenzip.kotlin.reactiveforms.form.MutableFormControl
@@ -31,7 +31,7 @@ fun <T> MultiAutocomplete(
     chipOverflow: ChipOverflow = ChipOverflow.Wrap,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
-    itemContent: @Composable (T) -> Unit,
+    itemContent: (@Composable RowScope.(String) -> Unit),
     emptyContent: @Composable (() -> Unit),
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(12.dp),
@@ -49,16 +49,8 @@ fun <T> MultiAutocomplete(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onSelectionChange = { item, selectionChange ->
-            when (selectionChange) {
-                SelectionChange.Deselect -> {
-                    val itemKey = key(item)
-                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
-                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
-                    control.setValue(newSelected)
-                }
-                else -> control.setValue(state.value + item)
-            }
+        onSelectedChange = { change ->
+            control.setValue(change.selected)
             control.markAsDirty()
         },
         search = search,
@@ -68,7 +60,7 @@ fun <T> MultiAutocomplete(
         chipOverflow = chipOverflow,
         label = label,
         placeholder = placeholder,
-        itemContent = {},
+        itemContent = itemContent,
         emptyContent = emptyContent,
         interactionSource = interactionSource,
         shape = shape,
@@ -87,7 +79,7 @@ fun <T> OutlinedMultiAutocomplete(
     chipOverflow: ChipOverflow = ChipOverflow.Wrap,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
-    itemContent: @Composable (T) -> Unit,
+    itemContent: (@Composable RowScope.(String) -> Unit),
     emptyContent: @Composable (() -> Unit),
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(12.dp),
@@ -105,16 +97,8 @@ fun <T> OutlinedMultiAutocomplete(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onSelectionChange = { item, selectionChange ->
-            when (selectionChange) {
-                SelectionChange.Deselect -> {
-                    val itemKey = key(item)
-                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
-                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
-                    control.setValue(newSelected)
-                }
-                else -> control.setValue(state.value + item)
-            }
+        onSelectedChange = { change ->
+            control.setValue(change.selected)
             control.markAsDirty()
         },
         search = search,
@@ -124,7 +108,7 @@ fun <T> OutlinedMultiAutocomplete(
         chipOverflow = chipOverflow,
         label = label,
         placeholder = placeholder,
-        itemContent = {},
+        itemContent = itemContent,
         emptyContent = emptyContent,
         interactionSource = interactionSource,
         shape = shape,
@@ -144,7 +128,7 @@ fun <T> MultiAutocomplete(
     chipOverflow: ChipOverflow = ChipOverflow.Wrap,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
-    itemContent: @Composable (T) -> Unit,
+    itemContent: (@Composable RowScope.(String) -> Unit),
     emptyContent: @Composable (() -> Unit),
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(12.dp),
@@ -163,16 +147,8 @@ fun <T> MultiAutocomplete(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onSelectionChange = { item, selectionChange ->
-            when (selectionChange) {
-                SelectionChange.Deselect -> {
-                    val itemKey = key(item)
-                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
-                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
-                    control.setValue(newSelected)
-                }
-                else -> control.setValue(state.value + item)
-            }
+        onSelectedChange = { change ->
+            control.setValue(change.selected)
             control.markAsDirty()
         },
         search = search,
@@ -182,7 +158,7 @@ fun <T> MultiAutocomplete(
         chipOverflow = chipOverflow,
         label = label,
         placeholder = placeholder,
-        itemContent = {},
+        itemContent = itemContent,
         emptyContent = emptyContent,
         interactionSource = interactionSource,
         shape = shape,
@@ -202,7 +178,7 @@ fun <T> OutlinedMultiAutocomplete(
     chipOverflow: ChipOverflow = ChipOverflow.Wrap,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
-    itemContent: @Composable (T) -> Unit,
+    itemContent: (@Composable RowScope.(String) -> Unit),
     emptyContent: @Composable (() -> Unit),
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(12.dp),
@@ -221,16 +197,8 @@ fun <T> OutlinedMultiAutocomplete(
         modifier = modifier,
         selected = state.value,
         displayWith = displayWith,
-        onSelectionChange = { item, selectionChange ->
-            when (selectionChange) {
-                SelectionChange.Deselect -> {
-                    val itemKey = key(item)
-                    val existingIndex = state.value.indexOfFirst { s -> key(s) == itemKey }
-                    val newSelected = state.value.toMutableList().apply { removeAt(existingIndex) }
-                    control.setValue(newSelected)
-                }
-                else -> control.setValue(state.value + item)
-            }
+        onSelectedChange = { change ->
+            control.setValue(change.selected)
             control.markAsDirty()
         },
         search = search,
@@ -240,7 +208,7 @@ fun <T> OutlinedMultiAutocomplete(
         chipOverflow = chipOverflow,
         label = label,
         placeholder = placeholder,
-        itemContent = {},
+        itemContent = itemContent,
         emptyContent = emptyContent,
         interactionSource = interactionSource,
         shape = shape,
