@@ -1,4 +1,4 @@
-package com.github.ravenzip.kotlin.reactiveforms.validation
+package com.github.ravenzip.kotlin.reactiveforms.core.validation
 
 sealed interface ValidationError
 

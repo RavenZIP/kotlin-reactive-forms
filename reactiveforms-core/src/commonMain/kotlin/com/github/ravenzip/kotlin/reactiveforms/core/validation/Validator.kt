@@ -1,7 +1,7 @@
-package com.github.ravenzip.kotlin.reactiveforms.validation
+package com.github.ravenzip.kotlin.reactiveforms.core.validation
 
-import com.github.ravenzip.kotlin.reactiveforms.utils.emailRegex
-import com.github.ravenzip.kotlin.reactiveforms.utils.phoneRegex
+import com.github.ravenzip.kotlin.reactiveforms.core.utils.emailRegex
+import com.github.ravenzip.kotlin.reactiveforms.core.utils.phoneRegex
 
 fun interface ValidatorFn<TValue, out TError : ValidationError> {
     operator fun invoke(value: TValue): TError?

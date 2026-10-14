@@ -1,13 +1,13 @@
 package com.github.ravenzip.kotlin.reactiveforms
 
-import com.github.ravenzip.kotlin.reactiveforms.data.*
-import com.github.ravenzip.kotlin.reactiveforms.form.mutableFormControl
-import com.github.ravenzip.kotlin.reactiveforms.validation.RangeValidator
+import com.github.ravenzip.kotlin.reactiveforms.core.data.*
+import com.github.ravenzip.kotlin.reactiveforms.core.form.mutableFormControl
+import com.github.ravenzip.kotlin.reactiveforms.core.validation.RangeValidator
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
 
 // TODO разобраться с тестами. Возможно, стоит их пересмотреть, но только после окончательной правки
 // архитектуры

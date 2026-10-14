@@ -17,8 +17,8 @@ import com.github.ravenzip.bereza.core.components.textfield.OutlinedTextFieldWit
 import com.github.ravenzip.bereza.core.components.textfield.TextFieldWithSupportingRow
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.FocusLostEffect
 import com.github.ravenzip.kotlin.reactiveforms.compose.shared.collectAsComponentState
-import com.github.ravenzip.kotlin.reactiveforms.form.MutableFormControl
-import com.github.ravenzip.kotlin.reactiveforms.validation.ValidationError
+import com.github.ravenzip.kotlin.reactiveforms.core.form.MutableFormControl
+import com.github.ravenzip.kotlin.reactiveforms.core.validation.ValidationError
 
 @Composable
 fun TextFieldWithSupportingRow(

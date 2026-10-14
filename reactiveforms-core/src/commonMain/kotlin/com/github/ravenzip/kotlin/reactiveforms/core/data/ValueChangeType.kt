@@ -1,4 +1,4 @@
-package com.github.ravenzip.kotlin.reactiveforms.data
+package com.github.ravenzip.kotlin.reactiveforms.core.data
 
 /** Типы изменений значения в контролах */
 sealed class ValueChangeType {

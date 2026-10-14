@@ -1,12 +1,12 @@
-package com.github.ravenzip.kotlin.reactiveforms.form
+package com.github.ravenzip.kotlin.reactiveforms.core.form
 
 import androidx.compose.runtime.Stable
-import com.github.ravenzip.kotlin.reactiveforms.data.FormControlState
-import com.github.ravenzip.kotlin.reactiveforms.data.FormControlStatus
-import com.github.ravenzip.kotlin.reactiveforms.data.ValueChangeType
-import com.github.ravenzip.kotlin.reactiveforms.data.disabled
-import com.github.ravenzip.kotlin.reactiveforms.validation.ValidationError
-import com.github.ravenzip.kotlin.reactiveforms.validation.ValidatorFn
+import com.github.ravenzip.kotlin.reactiveforms.core.data.FormControlState
+import com.github.ravenzip.kotlin.reactiveforms.core.data.FormControlStatus
+import com.github.ravenzip.kotlin.reactiveforms.core.data.ValueChangeType
+import com.github.ravenzip.kotlin.reactiveforms.core.data.disabled
+import com.github.ravenzip.kotlin.reactiveforms.core.validation.ValidationError
+import com.github.ravenzip.kotlin.reactiveforms.core.validation.ValidatorFn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

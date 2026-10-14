@@ -1,9 +1,9 @@
-package com.github.ravenzip.kotlin.reactiveforms.extensions
+package com.github.ravenzip.kotlin.reactiveforms.utils.extensions
 
-import com.github.ravenzip.kotlin.reactiveforms.data.FormControlSnapshot
-import com.github.ravenzip.kotlin.reactiveforms.data.ValueWithTypeChange
-import com.github.ravenzip.kotlin.reactiveforms.form.FormControl
-import com.github.ravenzip.kotlin.reactiveforms.validation.ValidationError
+import com.github.ravenzip.kotlin.reactiveforms.core.form.FormControl
+import com.github.ravenzip.kotlin.reactiveforms.core.validation.ValidationError
+import com.github.ravenzip.kotlin.reactiveforms.utils.data.FormControlSnapshot
+import com.github.ravenzip.kotlin.reactiveforms.utils.data.ValueWithTypeChange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

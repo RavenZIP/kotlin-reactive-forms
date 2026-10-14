@@ -1,4 +1,4 @@
-package com.github.ravenzip.kotlin.reactiveforms.utils
+package com.github.ravenzip.kotlin.reactiveforms.core.utils
 
 internal val emailRegex: Regex =
     Regex(

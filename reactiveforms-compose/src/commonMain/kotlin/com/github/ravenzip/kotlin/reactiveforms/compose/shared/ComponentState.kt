@@ -9,11 +9,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.github.ravenzip.bereza.core.data.ComponentErrorState
-import com.github.ravenzip.kotlin.reactiveforms.data.FormControlState
-import com.github.ravenzip.kotlin.reactiveforms.data.FormControlStatus
-import com.github.ravenzip.kotlin.reactiveforms.data.enabled
-import com.github.ravenzip.kotlin.reactiveforms.form.FormControl
-import com.github.ravenzip.kotlin.reactiveforms.validation.ValidationError
+import com.github.ravenzip.kotlin.reactiveforms.core.data.FormControlState
+import com.github.ravenzip.kotlin.reactiveforms.core.data.FormControlStatus
+import com.github.ravenzip.kotlin.reactiveforms.core.data.enabled
+import com.github.ravenzip.kotlin.reactiveforms.core.form.FormControl
+import com.github.ravenzip.kotlin.reactiveforms.core.validation.ValidationError
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 

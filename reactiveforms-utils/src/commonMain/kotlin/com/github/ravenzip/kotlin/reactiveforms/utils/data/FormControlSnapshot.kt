@@ -1,6 +1,7 @@
-package com.github.ravenzip.kotlin.reactiveforms.data
+package com.github.ravenzip.kotlin.reactiveforms.utils.data
 
-import com.github.ravenzip.kotlin.reactiveforms.validation.ValidationError
+import com.github.ravenzip.kotlin.reactiveforms.core.data.*
+import com.github.ravenzip.kotlin.reactiveforms.core.validation.ValidationError
 
 data class FormControlSnapshot<TValue, TError : ValidationError>(
     val value: TValue,
