@@ -78,7 +78,7 @@ fun <T> CheckboxGroup(
     CheckboxGroup(
         source = source,
         selectedItems = state.value,
-        onSelectionItemChange = { change ->
+        onSelectedChange = { change ->
             control.setValue(change.selected)
             control.markAsDirty()
         },

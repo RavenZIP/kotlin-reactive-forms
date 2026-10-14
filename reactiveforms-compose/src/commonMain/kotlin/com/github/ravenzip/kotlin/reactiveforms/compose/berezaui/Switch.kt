@@ -78,7 +78,7 @@ fun <T> SwitchGroup(
     SwitchGroup(
         source = source,
         selectedItems = state.value,
-        onSelectionItemChange = { change ->
+        onSelectedChange = { change ->
             control.setValue(change.selected)
             control.markAsDirty()
         },
